@@ -6,6 +6,7 @@ import sys
 import requests
 import logging
 import csv
+import pandas as pd
 from logging import config
 from ndexutil.config import NDExUtilConfig
 import ndexsignorloader
@@ -313,6 +314,7 @@ class LoadSignorIntoNDEx(object):
         """
         self._conf_file = args.conf
         self._profile = args.profile
+        self._outdir = os.path.abspath(theargs.datadir)
         self._user = None
         self._pass = None
         self._server = None
@@ -328,6 +330,28 @@ class LoadSignorIntoNDEx(object):
             self._pass = con.get(self._profile, NDExUtilConfig.PASSWORD)
             self._server = con.get(self._profile, NDExUtilConfig.SERVER)
 
+    def _get_signor_pathway_relations_df(self, pathway_id):
+
+        pathway_file_path = os.path.join(self._outdir, pathway_id + '.txt')
+        if not os.path.isfile(pathway_file_path):
+            raise NDExLoadSignorError(pathway_file_path + ' file missing.')
+
+        with open(pathway_file_path, 'r', encoding='utf-8') as pfp:
+            signor_pathway_relations_df = pd.read_csv(pfp, dtype=str, na_filter=False, delimiter='\t',
+                                                      engine='python')
+
+            return signor_pathway_relations_df
+
+    def _get_signor_pathway_description_df(self, pathway_id):
+        pathway_file_path = os.path.join(self._outdir, pathway_id + '_desc.txt')
+        if not os.path.isfile(pathway_file_path):
+            raise NDExLoadSignorError(pathway_file_path + ' file missing.')
+
+        with open(pathway_file_path, 'r', encoding='utf-8') as pfp:
+            signor_pathway_relations_df = pd.read_csv(pfp, dtype=str, na_filter=False, delimiter='\t',
+                                                      engine='python')
+
+            return signor_pathway_relations_df
 
     def run(self):
         """

@@ -20,7 +20,8 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['ndex2',
                 'ndexutil',
-                'requests']
+                'requests',
+                'pandas']
 
 setup_requirements = [ ]
 

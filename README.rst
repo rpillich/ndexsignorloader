@@ -9,18 +9,19 @@ NDEx Signor Content Loader
 .. image:: https://img.shields.io/travis/ndexcontent/ndexsignorloader.svg
         :target: https://travis-ci.org/ndexcontent/ndexsignorloader
 
+.. image:: https://coveralls.io/repos/github/ndexcontent/ndexsignorloader/badge.svg?branch=master
+        :target: https://coveralls.io/github/ndexcontent/ndexsignorloader?branch=master
+
 .. image:: https://readthedocs.org/projects/ndexsignorloader/badge/?version=latest
         :target: https://ndexsignorloader.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+Python application that loads Signor data into NDEx_
+
+This tool downloads data files from Signor_ and performs the following operations:
 
 
 
-Python Boilerplate contains all the boilerplate you need to create a Python NDEx Content Loader package.
-
-
-* Free software: BSD license
-* Documentation: https://ndexsignorloader.readthedocs.io.
 
 
 
@@ -144,3 +145,4 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 .. _NDEx: http://www.ndexbio.org
+.. _Signor: https://signor.uniroma2.it/

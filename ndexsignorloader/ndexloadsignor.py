@@ -1,8 +1,11 @@
 #! /usr/bin/env python
 
+import os
 import argparse
 import sys
+import requests
 import logging
+import csv
 from logging import config
 from ndexutil.config import NDExUtilConfig
 import ndexsignorloader
@@ -14,6 +17,62 @@ TSV2NICECXMODULE = 'ndexutil.tsv.tsv2nicecx2'
 LOG_FORMAT = "%(asctime)-15s %(levelname)s %(relativeCreated)dms " \
              "%(filename)s::%(funcName)s():%(lineno)d %(message)s"
 
+
+LOAD_PLAN = 'loadplan.json'
+"""
+Name of file containing json load plan
+stored within this package
+"""
+
+STYLE = 'style.cx'
+"""
+Name of file containing CX with style
+stored within this package
+"""
+
+SIGNOR_URL = 'https://signor.uniroma2.it/'
+"""
+Base Signor URL
+"""
+
+SPECIES_MAPPING = {'9606': 'Human', '10090': 'Mouse', '10116': 'Rat'}
+
+
+class NDExLoadSignorError(Exception):
+    """
+    Base exception for this module
+    """
+    pass
+
+
+def get_package_dir():
+    """
+    Gets directory where package is installed
+    :return:
+    """
+    return os.path.dirname(ndexsignorloader.__file__)
+
+
+def get_load_plan():
+    """
+    Gets the load plan stored with this package
+
+    :return: path to file
+    :rtype: string
+    """
+    return os.path.join(get_package_dir(), LOAD_PLAN)
+
+
+def get_style():
+    """
+    Gets the style stored with this package
+
+    :return: path to file
+    :rtype: string
+    """
+    return os.path.join(get_package_dir(), STYLE)
+
+
 def _parse_arguments(desc, args):
     """
     Parses command line arguments
@@ -24,6 +83,9 @@ def _parse_arguments(desc, args):
     help_fm = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(description=desc,
                                      formatter_class=help_fm)
+    parser.add_argument('datadir', help='Directory where signor '
+                                        'data is downloaded to '
+                                        'and processed from')
     parser.add_argument('--profile', help='Profile in configuration '
                                           'file to use to load '
                                           'NDEx credentials which means'
@@ -42,6 +104,19 @@ def _parse_arguments(desc, args):
     parser.add_argument('--conf', help='Configuration file to load '
                                        '(default ~/' +
                                        NDExUtilConfig.CONFIG_FILE)
+    parser.add_argument('--loadplan', help='Use alternate load plan file',
+                        default=get_load_plan())
+    parser.add_argument('--style',
+                        help='Path to NDEx CX file to use for styling'
+                             'networks',
+                        default=get_style())
+    parser.add_argument('--skipdownload', action='store_true',
+                        help='If set, skips download of data from signor'
+                             'and assumes data already resides in <datadir>'
+                             'directory')
+    parser.add_argument('--signorurl', default=SIGNOR_URL,
+                        help='URL to signor pathways (default ' +
+                        SIGNOR_URL + ')')
     parser.add_argument('--verbose', '-v', action='count', default=0,
                         help='Increases verbosity of logger to standard '
                              'error for log messages in this module and'
@@ -79,6 +154,152 @@ def _setup_logging(args):
     # logconf was set use that file
     logging.config.fileConfig(args.logconf,
                               disable_existing_loggers=False)
+
+
+class SignorDownloader(object):
+    """
+    Downloads signor data from site
+    """
+    PATHWAYDATA_SCRIPT = 'getPathwayData.php?list'
+
+    PATHWAY_LIST_FILE = 'pathway_list.txt'
+    PATHWAYDATA_DOWNLOAD_SCRIPT = 'getPathwayData.php?pathway='
+    GETDATA_SCRIPT = 'getData.php?organism='
+
+    def __init__(self, signorurl, outdir):
+        """
+        Constructor
+        :param signorurl: base SIGNOR URL
+        :type signorurl: string
+        :param outdir: directory where files will be downloaded to
+        :type outdir: string
+        """
+        self._signorurl = signorurl
+        self._outdir = outdir
+
+    def get_pathway_list_file(self):
+        """
+        gets pathway list file
+        :return:
+        """
+        return os.path.join(self._outdir,
+                            SignorDownloader.PATHWAY_LIST_FILE)
+
+    def _download_pathways_list(self):
+        """
+        Gets map of pathways
+        :return: dict
+        """
+        logger.info("Downloading pathways list")
+        resp = requests.get(SIGNOR_URL + '/' + SignorDownloader.PATHWAYDATA_SCRIPT)
+        if resp.status_code != 200:
+            raise NDExLoadSignorError('Got status code of ' +
+                                      str(resp.status_code) + ' from signor')
+        with open(self.get_pathway_list_file(), 'w') as f:
+            f.write(resp.text)
+            f.flush()
+
+    def _get_pathways_map(self):
+        """
+        Gets map from :py:const:`SignorDownloader.PATHWAY_LIST_FILE` file
+        :return:
+        """
+        path_map = {}
+        with open(self.get_pathway_list_file(), 'r') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for line in reader:
+                path_map[line[0].replace('/', '')] = line[1]
+
+        return path_map
+
+    def _get_download_url(self, pathway_id, relationsonly=False):
+        """
+
+        :param pathway_id:
+        :param relationsonly:
+        :return:
+        """
+        if relationsonly is False:
+            relationssuffix = ''
+        else:
+            relationssuffix = '&relations=only'
+
+        return SIGNOR_URL + SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +\
+               pathway_id + relationssuffix
+
+    def _download_file(self, download_url, destfile):
+        """
+
+        :param theurl:
+        :param destfile:
+        :return:
+        """
+        if os.path.isfile(destfile):
+            logger.info(destfile + ' exists. Skipping...')
+            return
+
+        logger.info('Downloading ' + download_url + ' to ' + destfile)
+        with requests.get(download_url, stream=True) as r:
+            r.raise_for_status()
+            with open(destfile, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:  # filter out keep-alive new chunks
+                        f.write(chunk)
+
+    def _download_pathway(self, pathway_id, destfile, relationsonly=False):
+        """
+
+        :param pathway_id:
+        :param destfile:
+        :param relationsonly:
+        :return:
+        """
+        download_url = self._get_download_url(pathway_id,
+                                              relationsonly=relationsonly)
+        self._download_file(download_url, destfile)
+
+    def _get_fulldownload_url(self, species_id):
+        """
+
+        :param species_id:
+        :return:
+        """
+        return SIGNOR_URL + SignorDownloader.GETDATA_SCRIPT + species_id
+
+    def _download_fullspecies(self, species_id, destfile):
+        """
+
+        :param species_id:
+        :param destfile:
+        :return:
+        """
+        download_url = self._get_fulldownload_url(species_id)
+        self._download_file(download_url, destfile)
+
+    def download_data(self):
+        """
+        Downloads data
+        :return:
+        """
+        if not os.path.isdir(self._outdir):
+            os.makedirs(self._outdir, mode=0o755)
+
+        self._download_pathways_list()
+        path_map = self._get_pathways_map()
+        for key in path_map.keys():
+            self._download_pathway(key, os.path.join(self._outdir,
+                                                     key + '.txt'),
+                                   relationsonly=True)
+            self._download_pathway(key, os.path.join(self._outdir,
+                                                     key + '_desc.txt'),
+                                   relationsonly=False)
+
+        for key in SPECIES_MAPPING.keys():
+            self._download_fullspecies(key,
+                                       os.path.join(self._outdir,
+                                                    'full_' +
+                                                    SPECIES_MAPPING[key] +
+                                                    '.txt'))
 
 
 class LoadSignorIntoNDEx(object):
@@ -152,6 +373,11 @@ def main(args):
 
     try:
         _setup_logging(theargs)
+        datadir = os.path.abspath(theargs.datadir)
+        if theargs.skipdownload is False:
+            downloader = SignorDownloader(theargs.signorurl,
+                                          datadir)
+            downloader.download_data()
         loader = LoadSignorIntoNDEx(theargs)
         return loader.run()
     except Exception as e:

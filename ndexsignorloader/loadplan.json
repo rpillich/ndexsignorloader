@@ -1,65 +1,95 @@
 {
     "context": {
-        "pubmed": "http://identifiers.org/pubmed/",
-        "chebi": "http://identifiers.org/chebi/CHEBI:",
+        "signor": "http://signor.uniroma2.it/relation_result.php?id=",
+        "BTO": "http://identifiers.org/bto/BTO:",
         "uniprot": "http://identifiers.org/uniprot/",
-        "cas": "http://identifiers.org/cas/",
-        "kegg.compound": "http://identifiers.org/kegg.compound/",
-        "hprd": "http://identifiers.org/hprd/",
-        "hgnc.symbol": "http://identifiers.org/hgnc.symbol/"
+        "pubmed": "http://identifiers.org/pubmed/",
+        "CID": "http://identifiers.org/pubchem.compound/",
+        "SID": "http://identifiers.org/pubchem.substance/",
+        "chebi": "http://identifiers.org/chebi/CHEBI:"
     },
     "source_plan":
     {
-        "rep_column": "PARTICIPANT_A",
-        "node_name_column": "PARTICIPANT_A",
-        "property_columns": [
-             {
-                  "column_name": "UNIFICATION_XREF_A",
-                  "attribute_name": "alias_a",
-                  "delimiter": ";"
-              },
-             {
-                  "column_name": "PARTICIPANT_TYPE_A",
-                  "attribute_name": "PARTICIPANT_TYPE_A"
-              },
-             {
-                  "column_name": "PARTICIPANT_NAME_A",
-                  "attribute_name": "PARTICIPANT_NAME_A"
-              }
-        ]
+        "rep_column": "IDA",
+        "rep_prefix": "uniprot",
+        "node_name_column": "ENTITYA",
+        "property_columns":
+           [
+               {
+                    "column_name": "TYPEA",
+                    "attribute_name": "TYPE"
+                },
+               {
+                    "column_name": "DATABASEA",
+                    "attribute_name": "DATABASE"
+                }
+           ]
     },
     "target_plan":
     {
-        "rep_column": "PARTICIPANT_B",
-        "node_name_column": "PARTICIPANT_B",
-        "property_columns": [
-             {
-                  "column_name": "UNIFICATION_XREF_B",
-                  "attribute_name": "alias_b",
-                  "delimiter": ";"
-              },
-             {
-                  "column_name": "PARTICIPANT_TYPE_B",
-                  "attribute_name": "PARTICIPANT_TYPE_B"
-              },
-                          {
-                  "column_name": "PARTICIPANT_NAME_B",
-                  "attribute_name": "PARTICIPANT_NAME_B"
-              }
-
-        ]
+        "rep_column": "IDB",
+        "node_name_column": "ENTITYB",
+        "property_columns":
+           [
+               {
+                    "column_name": "TYPEB",
+                    "attribute_name": "TYPE"
+                },
+               {
+                    "column_name": "DATABASEB",
+                    "attribute_name": "DATABASE"
+                }
+           ]
     },
     "edge_plan":
     {
         "default_predicate": "correlation",
-        "predicate_id_column": "INTERACTION_TYPE",
+        "predicate_id_column": "EFFECT",
         "property_columns": [
-          {
-              "column_name": "INTERACTION_PUBMED_ID",
-              "attribute_name": "citation",
-              "value_prefix": "pubmed",
-              "delimiter": ";"
-          }
+                {
+                    "column_name": "PMID",
+                    "attribute_name": "citation",
+                    "value_prefix": "pubmed",
+                    "delimiter": "|"
+                },
+               {
+                    "column_name": "MECHANISM",
+                    "attribute_name": "MECHANISM"
+                },
+               {
+                    "column_name": "RESIDUE",
+                    "attribute_name": "RESIDUE"
+                },
+               {
+                    "column_name": "SEQUENCE",
+                    "attribute_name": "SEQUENCE"
+                },
+               {
+                    "column_name": "CELL_DATA",
+                    "attribute_name": "CELL_DATA",
+                    "delimiter": ";"
+                },
+               {
+                    "column_name": "TISSUE_DATA",
+                    "attribute_name": "TISSUE_DATA",
+                    "delimiter": ";"
+                },
+               {
+                    "column_name": "DIRECT",
+                    "attribute_name": "DIRECT"
+                },
+               {
+                    "column_name": "NOTES",
+                    "attribute_name": "NOTES"
+                },
+               {
+                    "column_name": "ANNOTATOR",
+                    "attribute_name": "ANNOTATOR"
+                },
+               {
+                    "column_name": "SENTENCE",
+                    "attribute_name": "SENTENCE"
+                }
         ]
     }
 }

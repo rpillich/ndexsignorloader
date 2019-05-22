@@ -11,18 +11,22 @@
     "source_plan":
     {
         "rep_column": "IDA",
-        "rep_prefix": "uniprot",
         "node_name_column": "ENTITYA",
         "property_columns":
            [
                {
                     "column_name": "TYPEA",
-                    "attribute_name": "TYPE"
+                    "attribute_name": "type"
                 },
                {
                     "column_name": "DATABASEA",
                     "attribute_name": "DATABASE"
-                }
+                },
+               {
+                    "column_name": "REGULATOR_LOCATION",
+                    "attribute_name": "compartment"
+
+               }
            ]
     },
     "target_plan":
@@ -33,12 +37,16 @@
            [
                {
                     "column_name": "TYPEB",
-                    "attribute_name": "TYPE"
+                    "attribute_name": "type"
                 },
                {
                     "column_name": "DATABASEB",
                     "attribute_name": "DATABASE"
-                }
+                },
+               {
+                    "column_name": "TARGET_LOCATION",
+                    "attribute_name": "compartment"
+               }
            ]
     },
     "edge_plan":
@@ -54,41 +62,41 @@
                 },
                {
                     "column_name": "MECHANISM",
-                    "attribute_name": "MECHANISM"
+                    "attribute_name": "mechanism"
                 },
                {
                     "column_name": "RESIDUE",
-                    "attribute_name": "RESIDUE"
+                    "attribute_name": "residue"
                 },
                {
                     "column_name": "SEQUENCE",
-                    "attribute_name": "SEQUENCE"
+                    "attribute_name": "sequence"
                 },
                {
                     "column_name": "CELL_DATA",
-                    "attribute_name": "CELL_DATA",
+                    "attribute_name": "cell_data",
                     "delimiter": ";"
                 },
                {
                     "column_name": "TISSUE_DATA",
-                    "attribute_name": "TISSUE_DATA",
+                    "attribute_name": "tissue_data",
                     "delimiter": ";"
                 },
                {
                     "column_name": "DIRECT",
-                    "attribute_name": "DIRECT"
+                    "attribute_name": "direct"
                 },
                {
                     "column_name": "NOTES",
-                    "attribute_name": "NOTES"
+                    "attribute_name": "notes"
                 },
                {
                     "column_name": "ANNOTATOR",
-                    "attribute_name": "ANNOTATOR"
+                    "attribute_name": "annotator"
                 },
                {
                     "column_name": "SENTENCE",
-                    "attribute_name": "SENTENCE"
+                    "attribute_name": "sentence"
                 }
         ]
     }

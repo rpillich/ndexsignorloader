@@ -7,6 +7,7 @@ import requests
 import logging
 import csv
 import json
+import math
 from datetime import datetime
 
 import pandas as pd
@@ -476,7 +477,8 @@ class SpringLayoutUpdator(NetworkUpdator):
     """
     CARTESIAN_LAYOUT = 'cartesianLayout'
 
-    def __init__(self, scale=500.0):
+    def __init__(self, scale=500.0,
+                 iterations=50, seed=10):
         """
         Constructor
 
@@ -486,6 +488,8 @@ class SpringLayoutUpdator(NetworkUpdator):
         super(SpringLayoutUpdator, self).__init__()
 
         self._scale = scale
+        self._seed = seed
+        self._iterations = iterations
 
     def get_description(self):
         """
@@ -521,7 +525,13 @@ class SpringLayoutUpdator(NetworkUpdator):
 
         issues = []
         net_x = network.to_networkx(mode='default')
-        net_x.pos = networkx.drawing.spring_layout(net_x, scale=self._scale)
+        numnodes = len(network.get_nodes())
+        updatedscale = self._scale - numnodes
+        updatedk = 1.0
+        net_x.pos = networkx.drawing.spring_layout(net_x, scale=updatedscale,
+                                                   seed=self._seed,
+                                                   k=updatedk,
+                                                   iterations=self._iterations)
 
         network.set_opaque_aspect(SpringLayoutUpdator.CARTESIAN_LAYOUT,
                                   self._get_cartesian_aspect(net_x))
@@ -655,6 +665,9 @@ class LoadSignorIntoNDEx(object):
                 report.addissues(updator.get_description(), issues)
 
         self._add_pathway_info(network, pathway_id)
+
+        # apply style to network
+        network.apply_style_from_network(self._template)
 
         network_update_key = self._net_summaries.get(network.get_name().upper())
 

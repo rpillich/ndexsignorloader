@@ -6,14 +6,14 @@
   "metaData" : [ {
     "consistencyGroup" : 1,
     "elementCount" : 51,
-    "idCounter" : 1256,
+    "idCounter" : 1257,
     "name" : "nodes",
     "properties" : [ ],
     "version" : "1.0"
   }, {
     "consistencyGroup" : 1,
     "elementCount" : 74,
-    "idCounter" : 1256,
+    "idCounter" : 1257,
     "name" : "edges",
     "properties" : [ ],
     "version" : "1.0"
@@ -705,7 +705,7 @@
   }, {
     "s" : 302,
     "applies_to" : "edge_table",
-    "n" : "mechanism"
+    "n" : "MECHANISM"
   }, {
     "s" : 302,
     "applies_to" : "edge_table",
@@ -2160,7 +2160,7 @@
   "edgeAttributes" : [ {
     "s" : 302,
     "po" : 436,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2260,7 +2260,7 @@
   }, {
     "s" : 302,
     "po" : 435,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2360,7 +2360,7 @@
   }, {
     "s" : 302,
     "po" : 434,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -2460,7 +2460,7 @@
   }, {
     "s" : 302,
     "po" : 433,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -2554,7 +2554,7 @@
   }, {
     "s" : 302,
     "po" : 432,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -2648,7 +2648,7 @@
   }, {
     "s" : 302,
     "po" : 431,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2742,7 +2742,7 @@
   }, {
     "s" : 302,
     "po" : 430,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2842,7 +2842,7 @@
   }, {
     "s" : 302,
     "po" : 429,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2942,7 +2942,7 @@
   }, {
     "s" : 302,
     "po" : 428,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -3042,7 +3042,7 @@
   }, {
     "s" : 302,
     "po" : 427,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3136,7 +3136,7 @@
   }, {
     "s" : 302,
     "po" : 426,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3230,7 +3230,7 @@
   }, {
     "s" : 302,
     "po" : 425,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3324,7 +3324,7 @@
   }, {
     "s" : 302,
     "po" : 424,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3418,7 +3418,7 @@
   }, {
     "s" : 302,
     "po" : 423,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3512,7 +3512,7 @@
   }, {
     "s" : 302,
     "po" : 422,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3606,7 +3606,7 @@
   }, {
     "s" : 302,
     "po" : 421,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3700,7 +3700,7 @@
   }, {
     "s" : 302,
     "po" : 420,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3794,7 +3794,7 @@
   }, {
     "s" : 302,
     "po" : 419,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3888,7 +3888,7 @@
   }, {
     "s" : 302,
     "po" : 418,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "chemical activation"
   }, {
     "s" : 302,
@@ -3982,7 +3982,7 @@
   }, {
     "s" : 302,
     "po" : 417,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "small molecule catalysis"
   }, {
     "s" : 302,
@@ -4076,7 +4076,7 @@
   }, {
     "s" : 302,
     "po" : 416,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4170,7 +4170,7 @@
   }, {
     "s" : 302,
     "po" : 415,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4264,7 +4264,7 @@
   }, {
     "s" : 302,
     "po" : 414,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4358,7 +4358,7 @@
   }, {
     "s" : 302,
     "po" : 413,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4452,7 +4452,7 @@
   }, {
     "s" : 302,
     "po" : 412,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4546,7 +4546,7 @@
   }, {
     "s" : 302,
     "po" : 411,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4640,7 +4640,7 @@
   }, {
     "s" : 302,
     "po" : 410,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4734,7 +4734,7 @@
   }, {
     "s" : 302,
     "po" : 409,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4828,7 +4828,7 @@
   }, {
     "s" : 302,
     "po" : 408,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4922,7 +4922,7 @@
   }, {
     "s" : 302,
     "po" : 407,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5016,7 +5016,7 @@
   }, {
     "s" : 302,
     "po" : 406,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5110,7 +5110,7 @@
   }, {
     "s" : 302,
     "po" : 405,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5204,7 +5204,7 @@
   }, {
     "s" : 302,
     "po" : 404,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5298,7 +5298,7 @@
   }, {
     "s" : 302,
     "po" : 403,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5392,7 +5392,7 @@
   }, {
     "s" : 302,
     "po" : 402,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5486,7 +5486,7 @@
   }, {
     "s" : 302,
     "po" : 401,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5580,7 +5580,7 @@
   }, {
     "s" : 302,
     "po" : 400,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5674,7 +5674,7 @@
   }, {
     "s" : 302,
     "po" : 399,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5768,7 +5768,7 @@
   }, {
     "s" : 302,
     "po" : 398,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5862,7 +5862,7 @@
   }, {
     "s" : 302,
     "po" : 397,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5956,7 +5956,7 @@
   }, {
     "s" : 302,
     "po" : 396,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6050,7 +6050,7 @@
   }, {
     "s" : 302,
     "po" : 395,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -6144,7 +6144,7 @@
   }, {
     "s" : 302,
     "po" : 394,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6238,7 +6238,7 @@
   }, {
     "s" : 302,
     "po" : 393,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6332,7 +6332,7 @@
   }, {
     "s" : 302,
     "po" : 392,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "chemical inhibition"
   }, {
     "s" : 302,
@@ -6426,7 +6426,7 @@
   }, {
     "s" : 302,
     "po" : 391,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -6520,7 +6520,7 @@
   }, {
     "s" : 302,
     "po" : 390,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6614,7 +6614,7 @@
   }, {
     "s" : 302,
     "po" : 389,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "transcriptional repression"
   }, {
     "s" : 302,
@@ -6708,7 +6708,7 @@
   }, {
     "s" : 302,
     "po" : 388,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -6802,7 +6802,7 @@
   }, {
     "s" : 302,
     "po" : 387,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -6896,7 +6896,7 @@
   }, {
     "s" : 302,
     "po" : 386,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -6990,7 +6990,7 @@
   }, {
     "s" : 302,
     "po" : 385,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -7084,7 +7084,7 @@
   }, {
     "s" : 302,
     "po" : 384,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -7178,7 +7178,7 @@
   }, {
     "s" : 302,
     "po" : 383,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7272,7 +7272,7 @@
   }, {
     "s" : 302,
     "po" : 382,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7366,7 +7366,7 @@
   }, {
     "s" : 302,
     "po" : 381,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7460,7 +7460,7 @@
   }, {
     "s" : 302,
     "po" : 380,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7554,7 +7554,7 @@
   }, {
     "s" : 302,
     "po" : 379,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7648,7 +7648,7 @@
   }, {
     "s" : 302,
     "po" : 378,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : ""
   }, {
     "s" : 302,
@@ -7742,7 +7742,7 @@
   }, {
     "s" : 302,
     "po" : 377,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7836,7 +7836,7 @@
   }, {
     "s" : 302,
     "po" : 376,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7930,7 +7930,7 @@
   }, {
     "s" : 302,
     "po" : 375,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "relocalization"
   }, {
     "s" : 302,
@@ -8024,7 +8024,7 @@
   }, {
     "s" : 302,
     "po" : 374,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -8118,7 +8118,7 @@
   }, {
     "s" : 302,
     "po" : 373,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8212,7 +8212,7 @@
   }, {
     "s" : 302,
     "po" : 372,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8306,7 +8306,7 @@
   }, {
     "s" : 302,
     "po" : 371,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8400,7 +8400,7 @@
   }, {
     "s" : 302,
     "po" : 370,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8494,7 +8494,7 @@
   }, {
     "s" : 302,
     "po" : 369,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8588,7 +8588,7 @@
   }, {
     "s" : 302,
     "po" : 368,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8682,7 +8682,7 @@
   }, {
     "s" : 302,
     "po" : 367,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8776,7 +8776,7 @@
   }, {
     "s" : 302,
     "po" : 366,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8870,7 +8870,7 @@
   }, {
     "s" : 302,
     "po" : 365,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8964,7 +8964,7 @@
   }, {
     "s" : 302,
     "po" : 364,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -9058,7 +9058,7 @@
   }, {
     "s" : 302,
     "po" : 363,
-    "n" : "mechanism",
+    "n" : "MECHANISM",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -9567,7 +9567,7 @@
       "EDGE_STROKE_SELECTED_PAINT" : "#FF0000",
       "EDGE_STROKE_UNSELECTED_PAINT" : "#5B5B5B",
       "EDGE_TARGET_ARROW_SELECTED_PAINT" : "#FF0000",
-      "EDGE_TARGET_ARROW_SHAPE" : "NONE",
+      "EDGE_TARGET_ARROW_SHAPE" : "DELTA",
       "EDGE_TARGET_ARROW_SIZE" : "6.0",
       "EDGE_TARGET_ARROW_UNSELECTED_PAINT" : "#000000",
       "EDGE_TRANSPARENCY" : "255",
@@ -9585,7 +9585,7 @@
       },
       "EDGE_TARGET_ARROW_SHAPE" : {
         "type" : "DISCRETE",
-        "definition" : "COL=mechanism,T=string,K=0=transcriptional repression,V=0=T,K=1=binding,V=1=SQUARE,K=2=chemical inhibition,V=2=T"
+        "definition" : "COL=MECHANISM,T=string,K=0=transcriptional repression,V=0=T,K=1=binding,V=1=SQUARE,K=2=chemical inhibition,V=2=T"
       },
       "EDGE_UNSELECTED_PAINT" : {
         "type" : "DISCRETE",

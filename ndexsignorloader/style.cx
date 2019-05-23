@@ -6,14 +6,14 @@
   "metaData" : [ {
     "consistencyGroup" : 1,
     "elementCount" : 51,
-    "idCounter" : 1257,
+    "idCounter" : 1259,
     "name" : "nodes",
     "properties" : [ ],
     "version" : "1.0"
   }, {
     "consistencyGroup" : 1,
     "elementCount" : 74,
-    "idCounter" : 1257,
+    "idCounter" : 1259,
     "name" : "edges",
     "properties" : [ ],
     "version" : "1.0"
@@ -9589,7 +9589,7 @@
       },
       "EDGE_UNSELECTED_PAINT" : {
         "type" : "DISCRETE",
-        "definition" : "COL=interaction,T=string,K=0=up-regulates quantity,V=0=#0099FF,K=1=form complex,V=1=#00CC66,K=2=up-regulates activity,V=2=#0099FF,K=3=up-regulates quantity by stabilization,V=3=#0099FF,K=4=up-regulates,V=4=#0099FF,K=5=up-regulates quantity by expression,V=5=#0099FF"
+        "definition" : "COL=interaction,T=string,K=0=up-regulates quantity,V=0=#0099FF,K=1=form complex,V=1=#00CC66,K=2=down-regulates quantity by destabilization,V=2=#990066,K=3=down-regulates activity,V=3=#990066,K=4=up-regulates activity,V=4=#0099FF,K=5=down-regulates quantity by repression,V=5=#990066,K=6=up-regulates quantity by stabilization,V=6=#0099FF,K=7=up-regulates,V=7=#0099FF,K=8=down-regulates,V=8=#990066,K=9=up-regulates quantity by expression,V=9=#0099FF,K=10=unknown,V=10=#000000"
       }
     }
   } ]

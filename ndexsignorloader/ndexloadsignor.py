@@ -329,8 +329,12 @@ class SignorDownloader(object):
 
 class DirectEdgeAttributeUpdator(NetworkUpdator):
     """
-    Updates value of 'DIRECT' edge attribute
+    Updates value of
+    :py:const:`DirectEdgeAttributeUpdator.DIRECTED_ATTRIB`
+    edge attribute
+
     """
+
     DIRECTED_ATTRIB = 'direct'
 
     def __init__(self):
@@ -350,7 +354,8 @@ class DirectEdgeAttributeUpdator(NetworkUpdator):
     def update(self, network):
         """
         Iterates through all edges in network updating edge attribute
-        'DIRECT' to 'YES' if value is 't' otherwise set it to 'NO'
+        :py:const:`DirectEdgeAttributeUpdator.DIRECTED_ATTRIB` to 'True'
+        if value is 't' otherwise set it to 'False'
 
         :param network: network to examine
         :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
@@ -358,7 +363,7 @@ class DirectEdgeAttributeUpdator(NetworkUpdator):
         :rtype: list
         """
         if network is None:
-            return None
+            return ['network is None']
 
         issues = []
         directed_attr_name = DirectEdgeAttributeUpdator.DIRECTED_ATTRIB
@@ -650,6 +655,15 @@ class LoadSignorIntoNDEx(object):
     """
     Class to load content
     """
+
+    DISEASE_PATHWAYS = ['ALZHEIMER DISEASE', 'FSGS', 'NOONAN SYNDROME',
+                        'PARKINSON DISEASE']
+
+    CANCER_PATHWAYS = ['ACUTE MYELOID LEUKEMIA', 'COLORECTAL CARCINOMA',
+                       'GLIOBLASTOMA MULTIFORME', 'LUMINAL BREAST CANCER',
+                       'MALIGNANT MELANOMA', 'PROSTATE CANCER',
+                       'RHABDOMYOSARCOMA', 'THYROID CANCER']
+
     def __init__(self, args,
                  downloader,
                  updators=None):
@@ -831,6 +845,23 @@ class LoadSignorIntoNDEx(object):
                                       'pathway_list=' +
                                       str(pathway_id))
 
+    def _set_type(self, network):
+        """
+        Sets type network attribute adding a list with 'pathway' and an additional
+        value based on name of network.
+        :param network: network to update
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: None
+        """
+        typedata = ['pathway']
+        if network.get_name().upper() in LoadSignorIntoNDEx.DISEASE_PATHWAYS:
+            typedata.append("Disease Pathway")
+        elif network.get_name().upper() in LoadSignorIntoNDEx.CANCER_PATHWAYS:
+            typedata.append("Cancer Pathway")
+        else:
+            typedata.append("Signalling Pathway")
+        network.set_network_attribute('type', typedata, type='list_of_string')
+
     def _add_pathway_info(self, network, pathway_id):
         """
         Adds network
@@ -863,24 +894,10 @@ class LoadSignorIntoNDEx(object):
 
         network.set_network_attribute("version", f"{datetime.now():%d-%b-%Y}")
 
-        disease_pathways = ['ALZHEIMER DISEASE', 'FSGS', 'NOONAN SYNDROME', 'PARKINSON DISEASE']
-
-        cancer_pathways = ['ACUTE MYELOID LEUKEMIA', 'COLORECTAL CARCINOMA', 'GLIOBLASTOMA MULTIFORME',
-                           'LUMINAL BREAST CANCER', 'MALIGNANT MELANOMA', 'PROSTATE CANCER',
-                           'RHABDOMYOSARCOMA', 'THYROID CANCER']
-
         network.set_network_attribute("organism", "Human, 9606, Homo sapiens")
 
-        if network.get_name().upper() in disease_pathways:
-            network.set_network_attribute("networkType", "Disease Pathway")
-        elif network.get_name().upper() in cancer_pathways:
-            network.set_network_attribute("networkType", "Cancer Pathway")
-        else:
-            network.set_network_attribute("networkType", "Signalling Pathway")
-        # TODO: set “networkType” property depending on network
-        #    a. Signalling Pathway
-        #    b. Disease Pathway
-        #    c. Cancer Pathway
+        # set type network attribute
+        self._set_type(network)
 
         # set provenance for network
         self._set_generatedby_in_network_attributes(network)
@@ -932,7 +949,7 @@ def main(args):
     
     To connect to NDEx server a configuration file must be passed
     into --conf parameter. If --conf is unset the configuration 
-    the path ~/{confname} is examined. 
+    path ~/{confname} is examined. 
          
     The configuration file should be formatted as follows:
          
@@ -942,7 +959,9 @@ def main(args):
     {password} = <NDEx password>
     {server} = <NDEx server(omit http) ie public.ndexbio.org>
     
-    
+    For more information on what operations are performed
+    visit: https://github.com/ndexcontent/ndexsignorloader
+
     """.format(confname=NDExUtilConfig.CONFIG_FILE,
                user=NDExUtilConfig.USER,
                password=NDExUtilConfig.PASSWORD,

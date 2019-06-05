@@ -482,16 +482,17 @@ class NodeCompartmentUpdator(NetworkUpdator):
         :rtype: list
         """
         if network is None:
-            return None
+            return ['network is None']
 
         issues = []
+        comp_attr = NodeCompartmentUpdator.COMPARTMENT
         for node_id, node in network.get_nodes():
             node_attr = network.get_node_attribute(node_id,
-                                                   NodeCompartmentUpdator.COMPARTMENT)
+                                                   comp_attr)
             if node_attr == (None, None) or node_attr is None:
                 issues.append('Node (' + str(node_id) +
-                              ' did not have Compartment attribute')
-                network.set_node_attribute(node_id, NodeCompartmentUpdator.COMPARTMENT,
+                              ' did not have ' + comp_attr + ' attribute')
+                network.set_node_attribute(node_id, comp_attr,
                                            NodeCompartmentUpdator.CYTOPLASM)
                 continue
             if node_attr['v'] is None or node_attr['v'] == '':

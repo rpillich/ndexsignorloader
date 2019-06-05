@@ -389,7 +389,11 @@ class DirectEdgeAttributeUpdator(NetworkUpdator):
 class UpdatePrefixesForNodeRepresents(NetworkUpdator):
     """
     Prefixes node represents with uniprot: or signor:
+    based on value of :py:const:`UpdatePrefixesForNodeRepresents.DATABASE`
+    node attribute
     """
+
+    DATABASE = 'DATABASE'
 
     def __init__(self):
         """
@@ -408,9 +412,12 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
     def update(self, network):
         """
         Iterates through nodes and updates prefix for represents of
-        node based on value of 'DATABASE' node attribute. If the
-        value if 'UNIPROT' then 'uniprot:' is prefixed if not already there
-        and if 'SIGNOR' then 'signor:' is prefixed. The 'DATABASE' is
+        node based on value of
+        :py:const:`UpdatePrefixesForNodeRepresents.DATABASE` node
+        attribute. If the value if 'UNIPROT' then 'uniprot:' is
+        prefixed if not already there
+        and if 'SIGNOR' then 'signor:' is prefixed.
+        The :py:const:`UpdatePrefixesForNodeRepresents.DATABASE` is
         removed as well
 
         :param network: network to examine
@@ -422,8 +429,11 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
             return ['network is None']
 
         issues = []
+        db_attribute = UpdatePrefixesForNodeRepresents.DATABASE
+
         for node_id, node in network.get_nodes():
-            database = network.get_node_attribute_value(node_id, "DATABASE")
+            database = network.get_node_attribute_value(node_id,
+                                                        db_attribute)
             represents = node.get('r')
             if database == "UNIPROT":
                 if 'uniprot:' not in represents:
@@ -434,7 +444,8 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
                     represents = "signor:" + represents
                     node['r'] = represents
             # in all other cases, the identifier is already prefixed
-            network.remove_node_attribute(node_id, "DATABASE")
+            network.remove_node_attribute(node_id,
+                                          db_attribute)
 
         return issues
 

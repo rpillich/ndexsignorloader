@@ -25,7 +25,8 @@ requirements = ['ndex2',
 
 setup_requirements = [ ]
 
-test_requirements = [ ]
+test_requirements = ['requests-mock',
+                     'mock']
 
 setup(
     author="Chris Churas",

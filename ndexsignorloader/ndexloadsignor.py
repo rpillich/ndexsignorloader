@@ -489,8 +489,15 @@ class SpringLayoutUpdator(NetworkUpdator):
     """
     CARTESIAN_LAYOUT = 'cartesianLayout'
 
+    PHENOTYPESLIST = 'phenotypesList'
+    FACTOR = 'factor'
+    CYTOPLASM = 'cytoplasm'
+    RECEPTOR = 'receptor'
+    EXTRACELLULAR = 'extracellular'
+
     def __init__(self, scale=500.0,
-                 iterations=5, seed=10):
+                 iterations=10, seed=10,
+                 location_weight=5.0):
         """
         Constructor
 
@@ -502,6 +509,10 @@ class SpringLayoutUpdator(NetworkUpdator):
         self._scale = scale
         self._seed = seed
         self._iterations = iterations
+        self._min = -scale
+        self._max = scale
+        self._location_weight = location_weight
+        random.seed(self._seed)
 
     def get_description(self):
         """
@@ -509,6 +520,13 @@ class SpringLayoutUpdator(NetworkUpdator):
         :return:
         """
         return 'Applies Spring layout to network'
+
+    def _get_random_x_position(self):
+        """
+
+        :return:
+        """
+        return random.uniform(self._min, self._max)
 
     def _get_initial_node_positions(self, network):
         """
@@ -518,27 +536,34 @@ class SpringLayoutUpdator(NetworkUpdator):
         :return:
         """
         node_pos = {}
-        fixedlist = []
         compartment = NodeCompartmentUpdator.COMPARTMENT
         for nodeid, node in network.get_nodes():
             node_attr = network.get_node_attribute(nodeid,
                                                    compartment)
             if node_attr is None:
                 continue
-            if node_attr['v'] == 'phenotypesList':
-                node_pos[nodeid] = (random.uniform(-400.0, 400), 450.0)
-            elif node_attr['v'] == 'factor':
-                node_pos[nodeid] = (random.uniform(-400.0, 400), 200.0)
-            elif node_attr['v'] == 'cytoplasm':
-                node_pos[nodeid] = (random.uniform(-400.0, 400), 0.0)
-            elif node_attr['v'] == 'receptor':
-                node_pos[nodeid] = (random.uniform(-400.0, 400), -200.0)
-            elif node_attr['v'] == 'extracellular':
-                node_pos[nodeid] = (random.uniform(-400.0, 400), -450.0)
-            else:
-                continue
-            fixedlist.append(nodeid)
-        return node_pos, fixedlist
+            if node_attr['v'] == SpringLayoutUpdator.EXTRACELLULAR:
+                node_pos[nodeid] = (self._get_random_x_position(),
+                                    self._min)
+            elif node_attr['v'] == SpringLayoutUpdator.RECEPTOR:
+                node_pos[nodeid] = (self._get_random_x_position(),
+                                    self._min/2.0)
+            elif node_attr['v'] == SpringLayoutUpdator.CYTOPLASM:
+                node_pos[nodeid] = (self._get_random_x_position(), 0.0)
+            elif node_attr['v'] == SpringLayoutUpdator.FACTOR:
+                node_pos[nodeid] = (self._get_random_x_position(),
+                                    self._max/2.0)
+            elif node_attr['v'] == SpringLayoutUpdator.PHENOTYPESLIST:
+                node_pos[nodeid] = (self._get_random_x_position(),
+                                    self._max)
+
+        node_pos[SpringLayoutUpdator.EXTRACELLULAR] = (0.0, self._min)
+        node_pos[SpringLayoutUpdator.RECEPTOR] = (0.0, self._min/2.0)
+        node_pos[SpringLayoutUpdator.CYTOPLASM] = (0.0, 0.0)
+        node_pos[SpringLayoutUpdator.FACTOR] = (0.0, self._max/2.0)
+        node_pos[SpringLayoutUpdator.PHENOTYPESLIST] = (0.0, self._max)
+
+        return node_pos
 
     def _get_cartesian_aspect(self, net_x):
         """
@@ -549,9 +574,46 @@ class SpringLayoutUpdator(NetworkUpdator):
         :return: coordinates as list of dicts ie [{'node': <id>, 'x': <xpos>, 'y': <ypos>}]
         :rtype: list
         """
-        return [{'node': n,
-                 'x': float(net_x.pos[n][0]),
-                 'y': float(net_x.pos[n][1])} for n in net_x.pos]
+        # return [{'node': n,
+        #         'x': float(net_x.pos[n][0]),
+        #         'y': float(net_x.pos[n][1])} for n in net_x.pos]
+        coords = []
+        for n in net_x.pos:
+            if not isinstance(n, int):
+                continue
+            coords.append({'node': n,
+                           'x': float(net_x.pos[n][0]),
+                           'y': float(net_x.pos[n][1])})
+        return coords
+
+    def _get_networkx_object(self, network):
+        """
+
+        :param network:
+        :return:
+        """
+        net_x = network.to_networkx(mode='default')
+        net_x.add_node(SpringLayoutUpdator.EXTRACELLULAR,
+                       weight=self._location_weight)
+        net_x.add_node(SpringLayoutUpdator.RECEPTOR,
+                       weight=self._location_weight)
+        net_x.add_node(SpringLayoutUpdator.CYTOPLASM,
+                       weight=self._location_weight)
+        net_x.add_node(SpringLayoutUpdator.FACTOR,
+                       weight=self._location_weight)
+        net_x.add_node(SpringLayoutUpdator.PHENOTYPESLIST,
+                       weight=self._location_weight)
+
+        compartment = NodeCompartmentUpdator.COMPARTMENT
+
+        for nodeid, node in network.get_nodes():
+            node_attr = network.get_node_attribute(nodeid,
+                                                   compartment)
+            if node_attr is None:
+                continue
+            if node_attr['v'] is not None:
+                net_x.add_edge(nodeid, node_attr['v'])
+        return net_x
 
     def update(self, network):
         """
@@ -566,15 +628,16 @@ class SpringLayoutUpdator(NetworkUpdator):
             return None
 
         issues = []
-        net_x = network.to_networkx(mode='default')
+
+        net_x = self._get_networkx_object(network)
+
         numnodes = len(network.get_nodes())
         updatedscale = self._scale - numnodes
-        updatedk = 1.0
-        pos_dict, fixed_list = self._get_initial_node_positions(network)
+        updatedk = 1000.0 + numnodes*20
+        pos_dict = self._get_initial_node_positions(network)
         net_x.pos = networkx.drawing.spring_layout(net_x, scale=updatedscale,
                                                    seed=self._seed,
                                                    pos=pos_dict,
-                                                   fixed=fixed_list,
                                                    k=updatedk,
                                                    iterations=self._iterations)
 
@@ -791,8 +854,7 @@ class LoadSignorIntoNDEx(object):
             network.set_network_attribute("author", dataframe.iat[0, 3])
         if not pd.isnull(dataframe.iat[0, 2]):
             network.set_network_attribute("description",
-                                          '%s %s' % (dataframe.iat[0, 2],
-                                                     self._template.get_network_attribute('description')['v']))
+                                          '%s' % (dataframe.iat[0, 2]))
 
         network.set_network_attribute('rightsHolder', 'Prof. Gianni Cesareni ')
         network.set_network_attribute('rights', 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0')

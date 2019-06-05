@@ -3,6 +3,7 @@
 import os
 import argparse
 import sys
+import random
 import requests
 import logging
 import csv
@@ -46,6 +47,18 @@ SIGNOR_URL = 'https://signor.uniroma2.it/'
 """
 Base Signor URL
 """
+
+GENERATED_BY_ATTRIB = 'prov:wasGeneratedBy'
+"""
+Network attribute to denote what created this network
+"""
+
+DERIVED_FROM_ATTRIB = 'prov:wasDerivedFrom'
+"""
+Network attribute to denote source of network data
+"""
+
+NORMALIZATIONVERSION_ATTRIB = '__normalizationversion'
 
 SPECIES_MAPPING = {'9606': 'Human', '10090': 'Mouse', '10116': 'Rat'}
 
@@ -477,7 +490,7 @@ class SpringLayoutUpdator(NetworkUpdator):
     CARTESIAN_LAYOUT = 'cartesianLayout'
 
     def __init__(self, scale=500.0,
-                 iterations=50, seed=10):
+                 iterations=5, seed=10):
         """
         Constructor
 
@@ -496,6 +509,36 @@ class SpringLayoutUpdator(NetworkUpdator):
         :return:
         """
         return 'Applies Spring layout to network'
+
+    def _get_initial_node_positions(self, network):
+        """
+        Based on Compartment node attribute position nodes
+
+        :param network:
+        :return:
+        """
+        node_pos = {}
+        fixedlist = []
+        compartment = NodeCompartmentUpdator.COMPARTMENT
+        for nodeid, node in network.get_nodes():
+            node_attr = network.get_node_attribute(nodeid,
+                                                   compartment)
+            if node_attr is None:
+                continue
+            if node_attr['v'] == 'phenotypesList':
+                node_pos[nodeid] = (random.uniform(-400.0, 400), 450.0)
+            elif node_attr['v'] == 'factor':
+                node_pos[nodeid] = (random.uniform(-400.0, 400), 200.0)
+            elif node_attr['v'] == 'cytoplasm':
+                node_pos[nodeid] = (random.uniform(-400.0, 400), 0.0)
+            elif node_attr['v'] == 'receptor':
+                node_pos[nodeid] = (random.uniform(-400.0, 400), -200.0)
+            elif node_attr['v'] == 'extracellular':
+                node_pos[nodeid] = (random.uniform(-400.0, 400), -450.0)
+            else:
+                continue
+            fixedlist.append(nodeid)
+        return node_pos, fixedlist
 
     def _get_cartesian_aspect(self, net_x):
         """
@@ -527,8 +570,11 @@ class SpringLayoutUpdator(NetworkUpdator):
         numnodes = len(network.get_nodes())
         updatedscale = self._scale - numnodes
         updatedk = 1.0
+        pos_dict, fixed_list = self._get_initial_node_positions(network)
         net_x.pos = networkx.drawing.spring_layout(net_x, scale=updatedscale,
                                                    seed=self._seed,
+                                                   pos=pos_dict,
+                                                   fixed=fixed_list,
                                                    k=updatedk,
                                                    iterations=self._iterations)
 
@@ -679,6 +725,49 @@ class LoadSignorIntoNDEx(object):
                               user_agent=self._get_user_agent())
         return report
 
+    def _set_generatedby_in_network_attributes(self, network):
+        """
+        Sets the network attribute :py:const:`GENERATED_BY_ATTRIB`
+        with ndexncipidloader <VERSION>
+        :param network: network to add attribute
+        :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: None
+        """
+        network.set_network_attribute(GENERATED_BY_ATTRIB,
+                                      '<a href="https://github.com/'
+                                      'ndexcontent/ndexsignorloader"'
+                                      '>ndexsignorloader ' +
+                                      str(ndexsignorloader.__version__) +
+                                      '</a>')
+
+    def _set_normalization_version(self, network):
+        """
+        Sets the network attribute :py:const:`NORMALIZATIONVERSION`
+        with 0.1
+        :param network: network to add attribute
+        :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: None
+        """
+        network.set_network_attribute(NORMALIZATIONVERSION_ATTRIB, '0.1')
+
+    def _set_wasderivedfrom(self, network, pathway_id):
+        """
+        Sets the 'prov:wasDerivedBy' network attribute to the
+        ftp location containing the OWL file for this network.
+        The ftp information is pulled from :py:const:`DEFAULT_FTP_HOST` and
+         :py:const:`DEFAULT_FTP_DIR` and the owl file name is the
+         name of the network with .owl.gz appended
+
+        :param network: network to add attribute
+        :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: None
+        """
+        network.set_network_attribute(DERIVED_FROM_ATTRIB,
+                                      'https://signor.uniroma2.it/'
+                                      'pathway_browser.php?organism=&'
+                                      'pathway_list=' +
+                                      str(pathway_id))
+
     def _add_pathway_info(self, network, pathway_id):
         """
         Adds network
@@ -710,10 +799,6 @@ class LoadSignorIntoNDEx(object):
 
         network.set_network_attribute("reference", '<div>Perfetto L., <i>et al.</i></div><div><b>SIGNOR: a database of causal relationships between biological entities</b><i>.</i></div><div>Nucleic Acids Res. 2016 Jan 4;44(D1):D548-54</div><div><span><a href=\"\\&#34;https://doi.org/10.1093/nar/gkv1048\\&#34;\" target=\"\\&#34;\\&#34;\">doi: 10.1093/nar/gkv1048</a></span></div>')
 
-        network.set_network_attribute('dataSource',
-                                      'https://signor.uniroma2.it/pathway_browser.php?organism=&pathway_list=' +
-                                      str(pathway_id))
-
         network.set_network_attribute("version", f"{datetime.now():%d-%b-%Y}")
 
         disease_pathways = ['ALZHEIMER DISEASE', 'FSGS', 'NOONAN SYNDROME', 'PARKINSON DISEASE']
@@ -734,6 +819,15 @@ class LoadSignorIntoNDEx(object):
         #    a. Signalling Pathway
         #    b. Disease Pathway
         #    c. Cancer Pathway
+
+        # set provenance for network
+        self._set_generatedby_in_network_attributes(network)
+
+        # set normalization version for network
+        self._set_normalization_version(network)
+
+        # set was derived from
+        self._set_wasderivedfrom(network, str(pathway_id))
 
     def run(self):
         """

@@ -7,7 +7,6 @@ import requests
 import logging
 import csv
 import json
-import math
 from datetime import datetime
 
 import pandas as pd

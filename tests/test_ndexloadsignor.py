@@ -23,22 +23,23 @@ class TestNdexsignorloader(unittest.TestCase):
 
     def test_parse_arguments(self):
         """Tests parse arguments"""
-        res = ndexloadsignor._parse_arguments('hi', [])
+        res = ndexloadsignor._parse_arguments('hi', ['foo'])
 
         self.assertEqual(res.profile, 'ndexsignorloader')
         self.assertEqual(res.verbose, 0)
         self.assertEqual(res.logconf, None)
         self.assertEqual(res.conf, None)
+        self.assertEqual(res.datadir, 'foo')
 
         someargs = ['-vv','--conf', 'foo', '--logconf', 'hi',
-                    '--profile', 'myprofy']
+                    '--profile', 'myprofy', 'wellwell']
         res = ndexloadsignor._parse_arguments('hi', someargs)
 
         self.assertEqual(res.profile, 'myprofy')
         self.assertEqual(res.verbose, 2)
         self.assertEqual(res.logconf, 'hi')
         self.assertEqual(res.conf, 'foo')
-
+        self.assertEqual(res.datadir, 'wellwell')
 
     def test_setup_logging(self):
         """ Tests logging setup"""
@@ -49,7 +50,7 @@ class TestNdexsignorloader(unittest.TestCase):
             pass
 
         # args.logconf is None
-        res = ndexloadsignor._parse_arguments('hi', [])
+        res = ndexloadsignor._parse_arguments('hi', ['hehe'])
         ndexloadsignor._setup_logging(res)
 
         # args.logconf set to a file
@@ -81,7 +82,8 @@ args=(sys.stderr,)
 format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s""")
 
             res = ndexloadsignor._parse_arguments('hi', ['--logconf',
-                                                                       logfile])
+                                                                       logfile,
+                                                         'hehe'])
             ndexloadsignor._setup_logging(res)
 
         finally:
@@ -101,9 +103,9 @@ format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s""")
                 {server} = dev.ndexbio.org""".format(user=NDExUtilConfig.USER,
                                                      pw=NDExUtilConfig.PASSWORD,
                                                      server=NDExUtilConfig.SERVER))
-            res = ndexloadsignor.main(['myprog.py', '--conf',
+            res = ndexloadsignor.main(['myprog.py', '--skipdownload','--conf',
                                                      confile, '--profile',
-                                                     'hi'])
-            self.assertEqual(res, 0)
+                                                     'hi', temp_dir])
+            self.assertEqual(res, 2)
         finally:
             shutil.rmtree(temp_dir)

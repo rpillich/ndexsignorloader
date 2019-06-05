@@ -419,7 +419,7 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
         :rtype: list
         """
         if network is None:
-            return None
+            return ['network is None']
 
         issues = []
         for node_id, node in network.get_nodes():
@@ -429,7 +429,7 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
                 if 'uniprot:' not in represents:
                     represents = "uniprot:" + represents
                     node['r'] = represents
-            elif database in ["SIGNOR"]:
+            elif database == "SIGNOR":
                 if 'signor:' not in represents:
                     represents = "signor:" + represents
                     node['r'] = represents

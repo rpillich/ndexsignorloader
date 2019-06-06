@@ -642,7 +642,7 @@ class SpringLayoutUpdator(NetworkUpdator):
         :rtype: list
         """
         if network is None:
-            return None
+            return ['network is None']
 
         issues = []
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `NodeCompartmentUpdator` class."""
+"""Tests for `NodeLocationUpdator` class."""
 
 import os
 import tempfile
@@ -9,11 +9,11 @@ import shutil
 
 import unittest
 from ndex2.nice_cx_network import NiceCXNetwork
-from ndexsignorloader.ndexloadsignor import NodeCompartmentUpdator
+from ndexsignorloader.ndexloadsignor import NodeLocationUpdator
 
 
-class TestNodeCompartmentUpdator(unittest.TestCase):
-    """Tests for `UpdatePrefixesForNodeRepresents` class."""
+class TestNodeLocationUpdator(unittest.TestCase):
+    """Tests for `NodeLocationUpdator` class."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -22,48 +22,48 @@ class TestNodeCompartmentUpdator(unittest.TestCase):
         """Tear down test fixtures, if any."""
 
     def test_get_description(self):
-        updator = NodeCompartmentUpdator()
-        self.assertEqual('Replace any empty node compartment attribute '
+        updator = NodeLocationUpdator()
+        self.assertEqual('Replace any empty node location attribute '
                          'values with cytoplasm',
                          updator.get_description())
 
     def test_update_network_is_none(self):
-        updator = NodeCompartmentUpdator()
+        updator = NodeLocationUpdator()
         self.assertEqual(['network is None'],
                          updator.update(None))
 
     def test_update_network_empty(self):
-        updator = NodeCompartmentUpdator()
+        updator = NodeLocationUpdator()
         net = NiceCXNetwork()
         self.assertEqual([],
                          updator.update(net))
 
     def test_update_network_containing_all_types(self):
-        updator = NodeCompartmentUpdator()
+        updator = NodeLocationUpdator()
         net = NiceCXNetwork()
 
-        comp_attr = NodeCompartmentUpdator.COMPARTMENT
+        comp_attr = NodeLocationUpdator.LOCATION
         no_attr = net.create_node('somenode', node_represents='rep1')
 
         e_attr = net.create_node('somenode2',
                                  node_represents='uniprot:rep2')
         net.set_node_attribute(e_attr,
-                               NodeCompartmentUpdator.COMPARTMENT,
+                               NodeLocationUpdator.LOCATION,
                                '')
 
         o_attr = net.create_node('somenode2',
                                  node_represents='uniprot:rep2')
         net.set_node_attribute(o_attr,
-                               NodeCompartmentUpdator.COMPARTMENT,
+                               NodeLocationUpdator.LOCATION,
                                'blah')
 
-        self.assertEqual(['Node 0 did not have compartment attribute. Setting to cytoplasm'],
+        self.assertEqual(['Node 0 did not have location attribute. Setting to cytoplasm'],
                          updator.update(net))
 
-        self.assertEqual(NodeCompartmentUpdator.CYTOPLASM,
+        self.assertEqual(NodeLocationUpdator.CYTOPLASM,
                          net.get_node_attribute(no_attr, comp_attr)['v'])
 
-        self.assertEqual(NodeCompartmentUpdator.CYTOPLASM,
+        self.assertEqual(NodeLocationUpdator.CYTOPLASM,
                          net.get_node_attribute(e_attr, comp_attr)['v'])
 
         self.assertEqual('blah',

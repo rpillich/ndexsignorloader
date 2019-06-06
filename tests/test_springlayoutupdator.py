@@ -10,8 +10,7 @@ import shutil
 import unittest
 from ndex2.nice_cx_network import NiceCXNetwork
 from ndexsignorloader.ndexloadsignor import SpringLayoutUpdator
-from ndexsignorloader.ndexloadsignor import NodeCompartmentUpdator
-
+from ndexsignorloader.ndexloadsignor import NodeLocationUpdator
 
 
 class TestSpringLayoutUpdator(unittest.TestCase):
@@ -43,7 +42,7 @@ class TestSpringLayoutUpdator(unittest.TestCase):
         updator = SpringLayoutUpdator()
         net = NiceCXNetwork()
 
-        comp_attr = NodeCompartmentUpdator.COMPARTMENT
+        comp_attr = NodeLocationUpdator.LOCATION
         ecnode = net.create_node(node_name='ecnode', node_represents='ecnoder')
         net.set_node_attribute(ecnode, comp_attr,
                                SpringLayoutUpdator.EXTRACELLULAR)

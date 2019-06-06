@@ -24,7 +24,7 @@
                 },
                {
                     "column_name": "REGULATOR_LOCATION",
-                    "attribute_name": "compartment"
+                    "attribute_name": "location"
 
                }
            ]
@@ -45,7 +45,7 @@
                 },
                {
                     "column_name": "TARGET_LOCATION",
-                    "attribute_name": "compartment"
+                    "attribute_name": "location"
                }
            ]
     },

@@ -450,26 +450,26 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
         return issues
 
 
-class NodeCompartmentUpdator(NetworkUpdator):
+class NodeLocationUpdator(NetworkUpdator):
     """
     Replace any empty node Compartment attribute values with cytoplasm
     """
     CYTOPLASM = 'cytoplasm'
-    COMPARTMENT = 'compartment'
+    LOCATION = 'location'
 
     def __init__(self):
         """
         Constructor
 
         """
-        super(NodeCompartmentUpdator, self).__init__()
+        super(NodeLocationUpdator, self).__init__()
 
     def get_description(self):
         """
 
         :return:
         """
-        return 'Replace any empty node compartment attribute values with cytoplasm'
+        return 'Replace any empty node location attribute values with cytoplasm'
 
     def update(self, network):
         """
@@ -485,7 +485,7 @@ class NodeCompartmentUpdator(NetworkUpdator):
             return ['network is None']
 
         issues = []
-        comp_attr = NodeCompartmentUpdator.COMPARTMENT
+        comp_attr = NodeLocationUpdator.LOCATION
         for node_id, node in network.get_nodes():
             node_attr = network.get_node_attribute(node_id,
                                                    comp_attr)
@@ -493,13 +493,13 @@ class NodeCompartmentUpdator(NetworkUpdator):
                 issues.append('Node ' + str(node_id) +
                               ' did not have ' + comp_attr +
                               ' attribute. Setting to ' +
-                              NodeCompartmentUpdator.CYTOPLASM)
+                              NodeLocationUpdator.CYTOPLASM)
 
                 network.set_node_attribute(node_id, comp_attr,
-                                           NodeCompartmentUpdator.CYTOPLASM)
+                                           NodeLocationUpdator.CYTOPLASM)
                 continue
             if node_attr['v'] is None or node_attr['v'] == '':
-                node_attr['v'] = NodeCompartmentUpdator.CYTOPLASM
+                node_attr['v'] = NodeLocationUpdator.CYTOPLASM
         return issues
 
 
@@ -556,7 +556,7 @@ class SpringLayoutUpdator(NetworkUpdator):
         :return:
         """
         node_pos = {}
-        compartment = NodeCompartmentUpdator.COMPARTMENT
+        compartment = NodeLocationUpdator.LOCATION
         for nodeid, node in network.get_nodes():
             node_attr = network.get_node_attribute(nodeid,
                                                    compartment)
@@ -624,7 +624,7 @@ class SpringLayoutUpdator(NetworkUpdator):
         net_x.add_node(SpringLayoutUpdator.PHENOTYPESLIST,
                        weight=self._location_weight)
 
-        compartment = NodeCompartmentUpdator.COMPARTMENT
+        compartment = NodeLocationUpdator.LOCATION
 
         for nodeid, node in network.get_nodes():
             node_attr = network.get_node_attribute(nodeid,
@@ -1019,7 +1019,7 @@ def main(args):
 
         updators = [DirectEdgeAttributeUpdator(),
                     UpdatePrefixesForNodeRepresents(),
-                    NodeCompartmentUpdator(),
+                    NodeLocationUpdator(),
                     SpringLayoutUpdator()]
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)

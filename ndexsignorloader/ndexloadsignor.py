@@ -900,7 +900,7 @@ class LoadSignorIntoNDEx(object):
                                           '%s' % (dataframe.iat[0, 2]))
 
         network.set_network_attribute('rightsHolder', 'Prof. Gianni Cesareni ')
-        network.set_network_attribute('rights', 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0')
+        network.set_network_attribute('rights', 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)')
 
         network.set_network_attribute("reference", '<div>Perfetto L., <i>et al.</i></div><div><b>SIGNOR: a database of causal relationships between biological entities</b><i>.</i></div><div>Nucleic Acids Res. 2016 Jan 4;44(D1):D548-54</div><div><span><a href=\"\\&#34;https://doi.org/10.1093/nar/gkv1048\\&#34;\" target=\"\\&#34;\\&#34;\">doi: 10.1093/nar/gkv1048</a></span></div>')
 

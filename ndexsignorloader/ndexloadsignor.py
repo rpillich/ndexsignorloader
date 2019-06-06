@@ -490,8 +490,11 @@ class NodeCompartmentUpdator(NetworkUpdator):
             node_attr = network.get_node_attribute(node_id,
                                                    comp_attr)
             if node_attr == (None, None) or node_attr is None:
-                issues.append('Node (' + str(node_id) +
-                              ' did not have ' + comp_attr + ' attribute')
+                issues.append('Node ' + str(node_id) +
+                              ' did not have ' + comp_attr +
+                              ' attribute. Setting to ' +
+                              NodeCompartmentUpdator.CYTOPLASM)
+
                 network.set_node_attribute(node_id, comp_attr,
                                            NodeCompartmentUpdator.CYTOPLASM)
                 continue
@@ -776,6 +779,17 @@ class LoadSignorIntoNDEx(object):
 
             return signor_pathway_relations_df
 
+    def _add_node_types_in_network_to_report(self, network, report):
+        """
+        Adds node types to report
+        :param network:
+        :param report:
+        :return: None
+        """
+        for i, node in network.get_nodes():
+            val = network.get_node_attribute_value(i, 'type')
+            report.add_nodetype(val)
+
     def _process_pathway(self, pathway_id, pathway_name):
         """
 
@@ -804,6 +818,8 @@ class LoadSignorIntoNDEx(object):
         network.apply_style_from_network(self._template)
 
         network_update_key = self._net_summaries.get(network.get_name().upper())
+
+        self._add_node_types_in_network_to_report(network, report)
 
         if network_update_key is not None:
             network.update_to(network_update_key, self._server, self._user, self._pass,
@@ -932,6 +948,7 @@ class LoadSignorIntoNDEx(object):
         self._create_ndex_connection()
         self._load_network_summaries_for_user()
         self._load_style_template()
+        report_list = []
 
         pathway_map = self._downloader.get_pathways_map()
         if pathway_map is None:
@@ -940,10 +957,19 @@ class LoadSignorIntoNDEx(object):
         for key in pathway_map.keys():
             logger.info('Processing ' + key + ' => ' + pathway_map[key])
             try:
-                self._process_pathway(key, pathway_map[key])
+                report_list.append(self._process_pathway(key, pathway_map[key]))
             except NDExLoadSignorError as ne:
                 logger.exception('Unable to load pathway: ' + key +
                                  ' => ' + pathway_map[key])
+        node_type = set()
+        for entry in report_list:
+            for nt in entry.get_nodetypes():
+                node_type.add(nt)
+            sys.stdout.write(entry.get_fullreport_as_string())
+
+        sys.stdout.write('Node Types Found in all networks:\n')
+        for entry in node_type:
+            sys.stdout.write('\t' + entry + '\n')
 
         return 0
 

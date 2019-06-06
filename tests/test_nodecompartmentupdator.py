@@ -57,7 +57,7 @@ class TestNodeCompartmentUpdator(unittest.TestCase):
                                NodeCompartmentUpdator.COMPARTMENT,
                                'blah')
 
-        self.assertEqual(['Node (0 did not have compartment attribute'],
+        self.assertEqual(['Node 0 did not have compartment attribute. Setting to cytoplasm'],
                          updator.update(net))
 
         self.assertEqual(NodeCompartmentUpdator.CYTOPLASM,

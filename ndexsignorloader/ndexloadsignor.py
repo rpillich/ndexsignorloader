@@ -190,6 +190,9 @@ class SignorDownloader(object):
     PATHWAY_LIST_FILE = 'pathway_list.txt'
     PATHWAYDATA_DOWNLOAD_SCRIPT = 'getPathwayData.php?pathway='
     GETDATA_SCRIPT = 'getData.php?organism='
+    DOWNLOAD_COMPLEXES = 'download_complexes.php'
+    PROTEINFAMILY_FILE = 'SIGNOR_PF.csv'
+    COMPLEXES_FILE = 'SIGNOR_complexes.csv'
 
     def __init__(self, signorurl, outdir):
         """
@@ -210,13 +213,75 @@ class SignorDownloader(object):
         return os.path.join(self._outdir,
                             SignorDownloader.PATHWAY_LIST_FILE)
 
+    def get_proteinfamily_file(self):
+        """
+        Gets complexes file containing mapping of protein families to genes
+        :return:
+        """
+        return os.path.join(self._outdir,
+                            SignorDownloader.PROTEINFAMILY_FILE)
+
+    def get_complexes_file(self):
+        """
+        Gets complexes file containing mapping of protein families to genes
+        :return:
+        """
+        return os.path.join(self._outdir,
+                            SignorDownloader.COMPLEXES_FILE)
+
+    def _get_entity_file_map(self, entityfile):
+        """
+
+        :param entityfile:
+        :return:
+        """
+        path_map = {}
+        with open(entityfile, 'r') as f:
+            reader = csv.reader(f, delimiter=';')
+            for line in reader:
+                path_map[line[1]] = line[2]
+
+        return path_map
+
+    def get_proteinfamily_map(self):
+        """
+
+        :return:
+        """
+        return self._get_entity_file_map(self.get_proteinfamily_file())
+
+    def get_complexes_map(self):
+        """
+
+        :return:
+        """
+        return self._get_entity_file_map(self.get_complexes_file())
+
+    def _download_entity_file(self, entity_data_type, destfile):
+        """
+        Gets map of pathways
+        :return: dict
+        """
+        logger.info('Downloading ' + entity_data_type)
+        postdata = {'Content-Disposition': 'form-data; name="submit"',
+                    'submit': entity_data_type}
+        resp = requests.post(self._signorurl + '/' +
+                             SignorDownloader.DOWNLOAD_COMPLEXES,
+                             data=postdata)
+        if resp.status_code != 200:
+            raise NDExLoadSignorError('Got status code of ' +
+                                      str(resp.status_code) + ' from signor')
+        with open(destfile, 'w') as f:
+            f.write(resp.text)
+            f.flush()
+
     def _download_pathways_list(self):
         """
         Gets map of pathways
         :return: dict
         """
         logger.info("Downloading pathways list")
-        resp = requests.get(SIGNOR_URL + '/' + SignorDownloader.PATHWAYDATA_SCRIPT)
+        resp = requests.get(self._signorurl + '/' + SignorDownloader.PATHWAYDATA_SCRIPT)
         if resp.status_code != 200:
             raise NDExLoadSignorError('Got status code of ' +
                                       str(resp.status_code) + ' from signor')
@@ -249,7 +314,7 @@ class SignorDownloader(object):
         else:
             relationssuffix = '&relations=only'
 
-        return SIGNOR_URL + SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +\
+        return self._signorurl + SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +\
                pathway_id + relationssuffix
 
     def _download_file(self, download_url, destfile):
@@ -289,7 +354,7 @@ class SignorDownloader(object):
         :param species_id:
         :return:
         """
-        return SIGNOR_URL + SignorDownloader.GETDATA_SCRIPT + species_id
+        return self._signorurl + SignorDownloader.GETDATA_SCRIPT + species_id
 
     def _download_fullspecies(self, species_id, destfile):
         """
@@ -310,6 +375,12 @@ class SignorDownloader(object):
             os.makedirs(self._outdir, mode=0o755)
 
         self._download_pathways_list()
+        self._download_entity_file('Download protein family data',
+                                   self.get_proteinfamily_file())
+
+        self._download_entity_file('Download complex data',
+                                   self.get_complexes_file())
+
         path_map = self.get_pathways_map()
         for key in path_map.keys():
             self._download_pathway(key, os.path.join(self._outdir,
@@ -490,10 +561,10 @@ class NodeLocationUpdator(NetworkUpdator):
             node_attr = network.get_node_attribute(node_id,
                                                    comp_attr)
             if node_attr == (None, None) or node_attr is None:
-                issues.append('Node ' + str(node_id) +
-                              ' did not have ' + comp_attr +
-                              ' attribute. Setting to ' +
-                              NodeLocationUpdator.CYTOPLASM)
+                logger.debug('Node ' + str(node_id) +
+                             ' did not have ' + comp_attr +
+                             ' attribute. Setting to ' +
+                             NodeLocationUpdator.CYTOPLASM)
 
                 network.set_node_attribute(node_id, comp_attr,
                                            NodeLocationUpdator.CYTOPLASM)
@@ -663,6 +734,74 @@ class SpringLayoutUpdator(NetworkUpdator):
 
         network.set_opaque_aspect(SpringLayoutUpdator.CARTESIAN_LAYOUT,
                                   self._get_cartesian_aspect(net_x))
+        return issues
+
+
+class NodeMemberUpdator(NetworkUpdator):
+    """
+    Adds genes to 'member' attribute for any nodes that
+    are of type 'complex', 'proteinfamily'
+    """
+    TYPE = 'type'
+    MEMBER = 'member'
+    PROTEINFAMILY = 'proteinfamily'
+    COMPLEX = 'complex'
+
+    def __init__(self, proteinfamily_map, complexes_map):
+        """
+        Constructor
+
+        """
+        super(NodeMemberUpdator, self).__init__()
+        self._proteinfamilymap = proteinfamily_map
+        self._complexesmap = complexes_map
+
+    def get_description(self):
+        """
+
+        :return:
+        """
+        return 'Add genes to member node attribute for protein families'
+
+    def update(self, network):
+        """
+        Iterates through nodes and updates 'member' attribute
+        for nodes with 'type' attribute set to 'proteinfamily' or 'complex'
+        by getting mapping from signor
+
+        :param network: network to examine
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: list of node names for which no replacement was found
+        :rtype: list
+        """
+        if network is None:
+            return ['network is None']
+
+        issues = []
+        type_attr = NodeMemberUpdator.TYPE
+        for node_id, node in network.get_nodes():
+            node_attr = network.get_node_attribute(node_id,
+                                                   type_attr)
+            if node_attr == (None, None) or node_attr is None:
+                logger.debug('Node ' + str(node_id) +
+                              ' did not have ' + type_attr +
+                              ' attribute.')
+                continue
+            if node_attr['v'] == NodeMemberUpdator.PROTEINFAMILY:
+                if node['n'] not in self._proteinfamilymap:
+                    logger.error('Node: ' + node['n'] + ' not in proteinfamily map')
+                    issues.append('No entry in proteinfamily map for node: ' + str(node))
+                    continue
+                logger.warning('PF Node: ' + node['n'] + ' => ' + str(self._proteinfamilymap[node['n']]))
+            elif node_attr['v'] == NodeMemberUpdator.COMPLEX:
+                if node['n'] not in self._complexesmap:
+                    logger.error('Node: ' + node['n'] + ' not in complexes map')
+                    issues.append('No entry in complexes map for node: ' + str(node))
+                    continue
+                logger.warning('C Node: ' + node['n'] + ' => ' + str(self._complexesmap[node['n']]))
+            #  network.set_node_attribute(node_id, comp_attr,
+            #                             NodeLocationUpdator.CYTOPLASM)
+
         return issues
 
 
@@ -1020,6 +1159,8 @@ def main(args):
         updators = [DirectEdgeAttributeUpdator(),
                     UpdatePrefixesForNodeRepresents(),
                     NodeLocationUpdator(),
+                    NodeMemberUpdator(downloader.get_proteinfamily_map(),
+                                      downloader.get_complexes_map()),
                     SpringLayoutUpdator()]
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)

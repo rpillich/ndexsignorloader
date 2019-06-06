@@ -57,7 +57,7 @@ class TestNodeLocationUpdator(unittest.TestCase):
                                NodeLocationUpdator.LOCATION,
                                'blah')
 
-        self.assertEqual(['Node 0 did not have location attribute. Setting to cytoplasm'],
+        self.assertEqual([],
                          updator.update(net))
 
         self.assertEqual(NodeLocationUpdator.CYTOPLASM,

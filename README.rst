@@ -20,10 +20,38 @@ Python application that loads Signor data into NDEx_
 
 This tool downloads data files from Signor_ and performs the following operations:
 
+**1\)** The text files are loaded into a network using this loadplan_
+
+**2\)** The edge attribute **direct** is set to **True** if value is **'t'** otherwise its set to **False**
 
 
+**3\)** Using values in the **databasea** and **databaseb** data files, the **represents** field found on each node is prefixed with **uniprot:** if the database value is **UNIPROT** and **signor:** if the database value is **SIGNOR**
 
+**4\)** The **compartment** node attribute is set to **cytoplasm** if its not set
 
+**5\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **compartment** node attribute. The ordering is as follows:
+
+* **extracellular** are placed at the top
+* **receptor** are below **extracellular**
+* **cytoplasm** are placed in the middle
+* **factor** are below **cytoplasm**
+* **phenotypeList** are placed at the bottom
+
+**1000\)** The following network attributes are set
+
+* **name**
+* **author** ADD INFO
+* **organism** is set to **Human, 9606, Homo sapiens**
+* **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
+* **prov:wasDerivedFrom** set to URL to download data file
+* **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)
+* **description** is hardcoded in <ADD FILE>
+* **rightsHolder** is set to **Prof. Gianni Cesareni**
+* **rights** is set to **Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)**
+* **reference** is set to ADD INFO
+* **labels** is set to ADD INFO
+* **type** is set to a list with **pathway** and if known type of pathway
+* **__normalizationversion** is pulled from **__normalizationversion** attribute of `style.cx`_
 
 Dependencies
 ------------
@@ -146,3 +174,5 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 .. _NDEx: http://www.ndexbio.org
 .. _Signor: https://signor.uniroma2.it/
+.. _loadplan: https://github.com/ndexcontent/ndexsignorloader/blob/master/ndexsignorloader/loadplan.json
+.. _style.cx: https://github.com/ndexcontent/ndexsignorloader/blob/master/ndexsignorloader/style.cx

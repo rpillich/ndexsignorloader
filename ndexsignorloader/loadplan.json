@@ -6,7 +6,8 @@
         "pubmed": "http://identifiers.org/pubmed/",
         "CID": "http://identifiers.org/pubchem.compound/",
         "SID": "http://identifiers.org/pubchem.substance/",
-        "chebi": "http://identifiers.org/chebi/CHEBI:"
+        "chebi": "http://identifiers.org/chebi/CHEBI:",
+        "hgnc.symbol": "http://identifiers.org/hgnc.symbol/"
     },
     "source_plan":
     {

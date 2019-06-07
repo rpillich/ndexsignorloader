@@ -86,3 +86,39 @@ SIGNOR-C2;mTORC2;"P68104,  Q8TB45"
         finally:
             shutil.rmtree(temp_dir)
 
+    def test_get_pathways_map(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            dloader = SignorDownloader(None, temp_dir)
+            with open(dloader.get_pathway_list_file(), 'w') as f:
+                f.write('SIGNOR-AC\tAdipogenesis\n')
+                f.write('SIGNOR-AD\tAlzheimer Disease\n')
+                f.write('SIGNOR-AML\tAcute Myeloid Leukemia\n')
+                f.write('SIGNOR-AML-IDH/TET\tAML-IDH/TET\n')
+
+            res = dloader.get_pathways_map()
+            self.assertEqual('Adipogenesis', res['SIGNOR-AC'])
+            self.assertEqual('Alzheimer Disease', res['SIGNOR-AD'])
+            self.assertEqual('Acute Myeloid Leukemia', res['SIGNOR-AML'])
+            self.assertEqual('AML-IDH/TET', res['SIGNOR-AML-IDHTET'])
+        finally:
+            shutil.rmtree(temp_dir)
+
+    def test_get_download_url(self):
+        dloader = SignorDownloader('hi', None)
+        self.assertEqual('hi/' +
+                         SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +
+                         'haha', dloader._get_download_url('haha'))
+
+        self.assertEqual('hi/' +
+                         SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +
+                         'haha&relations=only',
+                         dloader._get_download_url('haha',
+                                                   relationsonly=True))
+
+    def test_get_fulldownload_url(self):
+        dloader = SignorDownloader('hi', None)
+        self.assertEqual('hi/' + SignorDownloader.GETDATA_SCRIPT +
+                         'yo',
+                         dloader._get_fulldownload_url('yo'))
+

@@ -288,7 +288,8 @@ class SignorDownloader(object):
         :return: dict
         """
         logger.info("Downloading pathways list")
-        resp = requests.get(self._signorurl + '/' + SignorDownloader.PATHWAYDATA_SCRIPT)
+        resp = requests.get(self._signorurl + '/' +
+                            SignorDownloader.PATHWAYDATA_SCRIPT)
         if resp.status_code != 200:
             raise NDExLoadSignorError('Got status code of ' +
                                       str(resp.status_code) + ' from signor')
@@ -321,7 +322,8 @@ class SignorDownloader(object):
         else:
             relationssuffix = '&relations=only'
 
-        return self._signorurl + SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +\
+        return self._signorurl + '/' +\
+               SignorDownloader.PATHWAYDATA_DOWNLOAD_SCRIPT +\
                pathway_id + relationssuffix
 
     def _download_file(self, download_url, destfile):
@@ -361,7 +363,8 @@ class SignorDownloader(object):
         :param species_id:
         :return:
         """
-        return self._signorurl + SignorDownloader.GETDATA_SCRIPT + species_id
+        return self._signorurl + '/' +\
+               SignorDownloader.GETDATA_SCRIPT + species_id
 
     def _download_fullspecies(self, species_id, destfile):
         """

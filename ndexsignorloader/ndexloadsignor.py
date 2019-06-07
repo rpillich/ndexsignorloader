@@ -20,6 +20,7 @@ import ndexutil.tsv.tsv2nicecx2 as t2n
 from ndexutil.config import NDExUtilConfig
 from ndexutil.tsv.loaderutils import NetworkIssueReport
 from ndexutil.tsv.loaderutils import NetworkUpdator
+from ndexutil.tsv.loaderutils import GeneSymbolSearcher
 
 import ndexsignorloader
 
@@ -231,7 +232,10 @@ class SignorDownloader(object):
 
     def _get_entity_file_map(self, entityfile):
         """
-
+        Given a path to a semi-colon delimited file which is assumed
+        to be either a SIGNOR proteinfamily or SIGNOR complexes file
+        create a dictionary with key set to contents of row in second column
+        and values set to comma split and trimmed list in 3rd column
         :param entityfile:
         :return:
         """
@@ -239,8 +243,11 @@ class SignorDownloader(object):
         with open(entityfile, 'r') as f:
             reader = csv.reader(f, delimiter=';')
             for line in reader:
-                path_map[line[1]] = line[2]
-
+                idlist = []
+                for entry in line[2].split(','):
+                    idlist.append(entry.strip())
+                path_map[line[1]] = idlist
+                path_map[line[0]] = idlist
         return path_map
 
     def get_proteinfamily_map(self):
@@ -746,8 +753,11 @@ class NodeMemberUpdator(NetworkUpdator):
     MEMBER = 'member'
     PROTEINFAMILY = 'proteinfamily'
     COMPLEX = 'complex'
+    SIGNOR_PF_PREFIX = 'SIGNOR-PF'
+    SIGNOR_C_PREFIX = 'SIGNOR-C'
 
-    def __init__(self, proteinfamily_map, complexes_map):
+    def __init__(self, proteinfamily_map, complexes_map,
+                 genesearcher=GeneSymbolSearcher()):
         """
         Constructor
 
@@ -755,13 +765,79 @@ class NodeMemberUpdator(NetworkUpdator):
         super(NodeMemberUpdator, self).__init__()
         self._proteinfamilymap = proteinfamily_map
         self._complexesmap = complexes_map
+        self._genesearcher = genesearcher
 
     def get_description(self):
         """
 
         :return:
         """
-        return 'Add genes to member node attribute for protein families'
+        return 'Add genes to member node attribute for complexes and protein families'
+
+    def _add_member_genes(self, network, node, proteinlist):
+        """
+
+        :param network:
+        :param node:
+        :param proteinlist:
+        :return:
+        """
+
+        if proteinlist is None or len(proteinlist) == 0:
+            return ['No proteins obtained for node: ' + str(node)]
+
+        issues = []
+        memberlist = []
+        for entry in proteinlist:
+            g_symbol = self._genesearcher.get_symbol(entry)
+            if g_symbol is None or g_symbol == '':
+                issues.append('For node ' + str(node) +
+                              ' No gene symbol found for ' +
+                              str(entry) + '. Skipping.')
+                continue
+
+            memberlist.append('hgnc.symbol:' + g_symbol)
+        if len(memberlist) == 0:
+            issues.append('Not a single gene symbol found. Skipping '
+                          'insertion of member attribute for node ' + str(node))
+            return issues
+
+        network.set_node_attribute(node['@id'], NodeMemberUpdator.MEMBER, memberlist,
+                                   type='list_of_string', overwrite=True)
+        return issues
+
+    def _replace_signor_ids(self, proteinlist):
+        """
+        Iterate through 'proteinlist` and if any entries start
+        with SIGNOR-PF or SIGNOR-C do another lookup in proteinfamilymap
+        or complexesmap set in constructor for the genes. If found add
+        these genes to the list.
+        :param proteinlist:
+        :return:
+        """
+        updatedlist = []
+        issues = []
+        for entry in proteinlist:
+            if entry.startswith(NodeMemberUpdator.SIGNOR_PF_PREFIX):
+                if entry not in self._proteinfamilymap:
+                    issues.append('Protein id: ' + entry + ' matched prefix ' +
+                                  NodeMemberUpdator.SIGNOR_PF_PREFIX +
+                                  ' which is assumed to be a reference to another'
+                                  ' entry, but none found. Skipping.')
+                    continue
+                updatedlist.extend(self._proteinfamilymap[entry])
+                continue
+            elif entry.startswith(NodeMemberUpdator.SIGNOR_C_PREFIX):
+                if entry not in self._complexesmap:
+                    issues.append('Protein id: ' + entry + ' matched prefix ' +
+                                  NodeMemberUpdator.SIGNOR_C_PREFIX +
+                                  ' which is assumed to be a reference to another'
+                                  ' entry, but none found. Skipping.')
+                    continue
+                updatedlist.extend(self._complexesmap[entry])
+                continue
+            updatedlist.append(entry)
+        return list(set(updatedlist)), issues
 
     def update(self, network):
         """
@@ -784,24 +860,25 @@ class NodeMemberUpdator(NetworkUpdator):
                                                    type_attr)
             if node_attr == (None, None) or node_attr is None:
                 logger.debug('Node ' + str(node_id) +
-                              ' did not have ' + type_attr +
-                              ' attribute.')
+                             ' did not have ' + type_attr +
+                             ' attribute.')
                 continue
             if node_attr['v'] == NodeMemberUpdator.PROTEINFAMILY:
                 if node['n'] not in self._proteinfamilymap:
                     logger.error('Node: ' + node['n'] + ' not in proteinfamily map')
                     issues.append('No entry in proteinfamily map for node: ' + str(node))
                     continue
-                logger.warning('PF Node: ' + node['n'] + ' => ' + str(self._proteinfamilymap[node['n']]))
+                proteinlist, oissues = self._replace_signor_ids(self._proteinfamilymap[node['n']])
+                issues.extend(oissues)
+                issues.extend(self._add_member_genes(network, node, proteinlist))
             elif node_attr['v'] == NodeMemberUpdator.COMPLEX:
                 if node['n'] not in self._complexesmap:
                     logger.error('Node: ' + node['n'] + ' not in complexes map')
                     issues.append('No entry in complexes map for node: ' + str(node))
                     continue
-                logger.warning('C Node: ' + node['n'] + ' => ' + str(self._complexesmap[node['n']]))
-            #  network.set_node_attribute(node_id, comp_attr,
-            #                             NodeLocationUpdator.CYTOPLASM)
-
+                proteinlist, oissues = self._replace_signor_ids(self._complexesmap[node['n']])
+                issues.extend(oissues)
+                issues.extend(self._add_member_genes(network, node, proteinlist))
         return issues
 
 
@@ -946,12 +1023,13 @@ class LoadSignorIntoNDEx(object):
                                                                self._loadplan)
         report = NetworkIssueReport(pathway_name)
 
+        self._add_pathway_info(network, pathway_id)
+
         if self._updators is not None:
             for updator in self._updators:
                 issues = updator.update(network)
                 report.addissues(updator.get_description(), issues)
 
-        self._add_pathway_info(network, pathway_id)
 
         # apply style to network
         network.apply_style_from_network(self._template)

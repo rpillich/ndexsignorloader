@@ -24,12 +24,13 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **2\)** The edge attribute **direct** is set to **True** if value is **'t'** otherwise its set to **False**
 
-
 **3\)** Using values in the **databasea** and **databaseb** data files, the **represents** field found on each node is prefixed with **uniprot:** if the database value is **UNIPROT** and **signor:** if the database value is **SIGNOR**
 
-**4\)** The **compartment** node attribute is set to **cytoplasm** if its not set
+**4\)** The **compartment** node attribute is set to **cytoplasm** if its not set (which is case for all nodes in **FULL-Human, Full-Rat, and Full-Mouse** networks)
 
-**5\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **compartment** node attribute. The ordering is as follows:
+**5\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
+
+**6\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **compartment** node attribute. The ordering is as follows:
 
 * **extracellular** are placed at the top
 * **receptor** are below **extracellular**
@@ -37,21 +38,21 @@ This tool downloads data files from Signor_ and performs the following operation
 * **factor** are below **cytoplasm**
 * **phenotypeList** are placed at the bottom
 
-**1000\)** The following network attributes are set
+**7\)** The following network attributes are set
 
-* **name**
-* **author** ADD INFO
-* **organism** is set to **Human, 9606, Homo sapiens**
+* **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the Full networks which have a more generic description)
+* **author** is set to data from Signor service **getPathwayData.php?pathway=**
+* **organism** is set to **Human, 9606, Homo sapiens** (except for Full Rat and Mouse networks)
 * **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
 * **prov:wasDerivedFrom** set to URL to download data file
 * **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)
-* **description** is hardcoded in <ADD FILE>
+* **description** is taken from Signor service **getPathwayData.php?pathway=**
 * **rightsHolder** is set to **Prof. Gianni Cesareni**
 * **rights** is set to **Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)**
-* **reference** is set to ADD INFO
-* **labels** is set to ADD INFO
+* **reference** is set to citation for **SIGNOR: a database of causal relationships between biological entities**
+* **labels** is set to data from Signor service **getPathwayData.php?pathway=**
 * **type** is set to a list with **pathway** and if known type of pathway
-* **__normalizationversion** is pulled from **__normalizationversion** attribute of `style.cx`_
+* **__normalizationversion** is set to **0.1**
 
 Dependencies
 ------------

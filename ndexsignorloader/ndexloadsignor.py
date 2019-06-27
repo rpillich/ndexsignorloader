@@ -3,11 +3,13 @@
 import os
 import argparse
 import sys
+import copy
 import random
 import requests
 import logging
 import csv
 import json
+import re
 from datetime import datetime
 
 import pandas as pd
@@ -277,7 +279,8 @@ class SignorDownloader(object):
                              data=postdata)
         if resp.status_code != 200:
             raise NDExLoadSignorError('Got status code of ' +
-                                      str(resp.status_code) + ' from signor')
+                                      str(resp.status_code) +
+                                      ' from signor')
         with open(destfile, 'w') as f:
             f.write(resp.text)
             f.flush()
@@ -467,6 +470,89 @@ class DirectEdgeAttributeUpdator(NetworkUpdator):
         return issues
 
 
+class InvalidEdgeCitationRemover(NetworkUpdator):
+    """
+    Looks at citation edge attribute and removes any
+    non-numeric values leaving an empty list
+    """
+
+    CITATION_ATTRIB = 'citation'
+
+    PMC_MAP = {'PMC3619734': '15109499'}
+    """
+    There is one PMCID entry seen in the full networks.
+    For now the above map replaces that PMC id with a 
+    pubmed identifier, but in future might need to 
+    setup a service to query for these from:
+    
+    https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=ndexsignorloader&email=my_email@example.com&ids=PMC3619734
+    """
+
+    def __init__(self):
+        """
+        Constructor
+
+        """
+        super(InvalidEdgeCitationRemover, self).__init__()
+
+    def get_description(self):
+        """
+
+        :return:
+        """
+        return 'Removes any negative and non-numeric edge citations'
+
+    def update(self, network):
+        """
+        Iterates through all edges in network removing any non-numeric
+        or negative citations after pubmed: prefix is removed.
+
+        :param network: network to examine
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: empty list
+        :rtype: list
+        """
+        if network is None:
+            return ['network is None']
+
+        pmc_map = InvalidEdgeCitationRemover.PMC_MAP
+        issues = []
+        citation_attr_name = InvalidEdgeCitationRemover.CITATION_ATTRIB
+        for edge_id, edge in network.get_edges():
+            edge_attr = network.get_edge_attribute(edge_id,
+                                                   citation_attr_name)
+            if edge_attr == (None, None):
+                continue
+
+            update_citation = False
+            updatedcitations = []
+            for entry in edge_attr['v']:
+                idonly = re.sub('^pubmed:', '', entry)
+                # logger.info('Entry => ' +  entry + ' id: ' + idonly)
+                if idonly.isdigit():
+                    updatedcitations.append(entry)
+                elif idonly in pmc_map:
+                    update_citation = True
+                    updatedcitations.append('pubmed:' +
+                                            pmc_map[idonly])
+                    issues.append('Replacing ' + idonly +
+                                  ' with pubmed id: ' + pmc_map[idonly] +
+                                  ' on edge id: ' + str(edge_id))
+                else:
+                    update_citation = True
+                    issues.append('Removing invalid citation id: ' +
+                                  str(entry) + ' on edge id: ' + str(edge_id))
+
+            if update_citation is True:
+                network.remove_edge_attribute(edge_id, citation_attr_name)
+                network.set_edge_attribute(edge_id,
+                                           citation_attr_name,
+                                           updatedcitations,
+                                           type='list_of_string')
+
+        return issues
+
+
 class UpdatePrefixesForNodeRepresents(NetworkUpdator):
     """
     Prefixes node represents with uniprot: or signor:
@@ -550,7 +636,8 @@ class NodeLocationUpdator(NetworkUpdator):
 
         :return:
         """
-        return 'Replace any empty node location attribute values with cytoplasm'
+        return 'Replace any empty node location attribute values with ' \
+               'cytoplasm'
 
     def update(self, network):
         """
@@ -672,7 +759,8 @@ class SpringLayoutUpdator(NetworkUpdator):
         to NDEx aspect
         :param net_x: network with coordinates
         :type net_x: :py:class:`networkx.Graph`
-        :return: coordinates as list of dicts ie [{'node': <id>, 'x': <xpos>, 'y': <ypos>}]
+        :return: coordinates as list of dicts ie
+                 [{'node': <id>, 'x': <xpos>, 'y': <ypos>}]
         :rtype: list
         """
         # return [{'node': n,
@@ -775,7 +863,8 @@ class NodeMemberUpdator(NetworkUpdator):
 
         :return:
         """
-        return 'Add genes to member node attribute for complexes and protein families'
+        return 'Add genes to member node attribute for complexes and protein ' \
+               'families'
 
     def _add_member_genes(self, network, node, proteinlist):
         """
@@ -802,10 +891,12 @@ class NodeMemberUpdator(NetworkUpdator):
             memberlist.append('hgnc.symbol:' + g_symbol)
         if len(memberlist) == 0:
             issues.append('Not a single gene symbol found. Skipping '
-                          'insertion of member attribute for node ' + str(node))
+                          'insertion of member attribute for node ' +
+                          str(node))
             return issues
 
-        network.set_node_attribute(node['@id'], NodeMemberUpdator.MEMBER, memberlist,
+        network.set_node_attribute(node['@id'], NodeMemberUpdator.MEMBER,
+                                   memberlist,
                                    type='list_of_string', overwrite=True)
         return issues
 
@@ -823,9 +914,11 @@ class NodeMemberUpdator(NetworkUpdator):
         for entry in proteinlist:
             if entry.startswith(NodeMemberUpdator.SIGNOR_PF_PREFIX):
                 if entry not in self._proteinfamilymap:
-                    issues.append('Protein id: ' + entry + ' matched prefix ' +
+                    issues.append('Protein id: ' + entry +
+                                  ' matched prefix ' +
                                   NodeMemberUpdator.SIGNOR_PF_PREFIX +
-                                  ' which is assumed to be a reference to another'
+                                  ' which is assumed to be a reference '
+                                  'to another'
                                   ' entry, but none found. Skipping.')
                     continue
                 updatedlist.extend(self._proteinfamilymap[entry])
@@ -834,7 +927,8 @@ class NodeMemberUpdator(NetworkUpdator):
                 if entry not in self._complexesmap:
                     issues.append('Protein id: ' + entry + ' matched prefix ' +
                                   NodeMemberUpdator.SIGNOR_C_PREFIX +
-                                  ' which is assumed to be a reference to another'
+                                  ' which is assumed to be a '
+                                  'reference to another'
                                   ' entry, but none found. Skipping.')
                     continue
                 updatedlist.extend(self._complexesmap[entry])
@@ -868,20 +962,25 @@ class NodeMemberUpdator(NetworkUpdator):
                 continue
             if node_attr['v'] == NodeMemberUpdator.PROTEINFAMILY:
                 if node['n'] not in self._proteinfamilymap:
-                    logger.error('Node: ' + node['n'] + ' not in proteinfamily map')
-                    issues.append('No entry in proteinfamily map for node: ' + str(node))
+                    logger.error('Node: ' + node['n'] +
+                                 ' not in proteinfamily map')
+                    issues.append('No entry in proteinfamily map for node: ' +
+                                  str(node))
                     continue
                 proteinlist, oissues = self._replace_signor_ids(self._proteinfamilymap[node['n']])
                 issues.extend(oissues)
-                issues.extend(self._add_member_genes(network, node, proteinlist))
+                issues.extend(self._add_member_genes(network, node,
+                                                     proteinlist))
             elif node_attr['v'] == NodeMemberUpdator.COMPLEX:
                 if node['n'] not in self._complexesmap:
                     logger.error('Node: ' + node['n'] + ' not in complexes map')
-                    issues.append('No entry in complexes map for node: ' + str(node))
+                    issues.append('No entry in complexes map for node: ' +
+                                  str(node))
                     continue
                 proteinlist, oissues = self._replace_signor_ids(self._complexesmap[node['n']])
                 issues.extend(oissues)
-                issues.extend(self._add_member_genes(network, node, proteinlist))
+                issues.extend(self._add_member_genes(network, node,
+                                                     proteinlist))
         return issues
 
 
@@ -914,6 +1013,7 @@ class LoadSignorIntoNDEx(object):
         self._server = None
         self._ndex = None
         self._loadplan = None
+        self._full_loadplan = None
         self._template = None
         self._net_summaries = None
         self._downloader = downloader
@@ -945,7 +1045,8 @@ class LoadSignorIntoNDEx(object):
         """
         if self._ndex is None:
             self._ndex = Ndex2(host=self._server, username=self._user,
-                               password=self._pass, user_agent=self._get_user_agent())
+                               password=self._pass,
+                               user_agent=self._get_user_agent())
 
     def _parse_load_plan(self):
         """
@@ -954,6 +1055,12 @@ class LoadSignorIntoNDEx(object):
         """
         with open(self._args.loadplan, 'r') as f:
             self._loadplan = json.load(f)
+
+        self._full_loadplan = copy.deepcopy(self._loadplan)
+        self._full_loadplan['source_plan']['property_columns'].remove({'column_name': 'REGULATOR_LOCATION',
+                                                                       'attribute_name': 'location'})
+        self._full_loadplan['target_plan']['property_columns'].remove({'column_name': 'TARGET_LOCATION',
+                                                                      'attribute_name': 'location'})
 
     def _load_style_template(self):
         """
@@ -974,26 +1081,69 @@ class LoadSignorIntoNDEx(object):
             if nk.get('name') is not None:
                 self._net_summaries[nk.get('name').upper()] = nk.get('externalId')
 
-    def _get_signor_pathway_relations_df(self, pathway_id):
+    def _get_signor_pathway_relations_df(self, pathway_id,
+                                         is_full_pathway=False):
+        """
+        Loads SIF file `pathway_id`.txt from output directory specified
+        in constructor via Pandas.
 
+        :param pathway_id: Prefix of file to load
+        :param is_full_pathway: If true it is assumed the pathway_id file
+                                is a full network and a custom set of
+                                columns is passed to Pandas and a filter
+                                is applied removing any entries that are
+                                not human
+        :return: Pandas data frame of data
+        """
         pathway_file_path = os.path.join(self._outdir, pathway_id + '.txt')
         if not os.path.isfile(pathway_file_path):
-            raise NDExLoadSignorError(pathway_file_path + ' file missing.')
+            raise NDExLoadSignorError(pathway_file_path +
+                                      ' file missing.')
         if os.path.getsize(pathway_file_path) < 10:
-            raise NDExLoadSignorError(pathway_file_path + ' looks to be empty')
-        with open(pathway_file_path, 'r', encoding='utf-8') as pfp:
-            signor_pathway_relations_df = pd.read_csv(pfp, dtype=str, na_filter=False, delimiter='\t',
-                                                      engine='python')
+            raise NDExLoadSignorError(pathway_file_path +
+                                      ' looks to be empty')
+        usecols = None
+        index_col = None
+        if is_full_pathway is True:
+            logger.info('Full pathway detected, setting columns for pandas')
+            usecols = ['entitya', 'typea', 'ida', 'databasea', 'entityb',
+                       'typeb', 'idb', 'databaseb', 'effect', 'mechanism',
+                       'residue', 'sequence', 'tax_id', 'cell_data',
+                       'tissue_data', 'modulator_complex', 'target_complex',
+                       'modificationa', 'modaseq', 'modificationb', 'modbseq',
+                       'pmid', 'direct', 'notes', 'annotator', 'sentence',
+                       'signor_id']
+            index_col = False
 
-            return signor_pathway_relations_df
+        with open(pathway_file_path, 'r', encoding='utf-8') as pfp:
+            df = pd.read_csv(pfp, dtype=str, na_filter=False,
+                             delimiter='\t', names=usecols,
+                             index_col=index_col, engine='python')
+
+            # remove rows that are not human
+            # (taken from load-content/signor/process_signor.py)
+            # not sure if this does that
+            if is_full_pathway is True:
+                filtered = df[(df["entitya"] != "") &
+                              (df["entityb"] != "") &
+                              (df["ida"] != "") &
+                              (df["idb"] != "")]
+                logger.info('Original data frame had: ' +
+                            str(len(df.index)) + ' rows and filtered has: ' +
+                            str(len(filtered.index)) + ' rows')
+                return filtered
+            return df
 
     def _get_signor_pathway_description_df(self, pathway_id):
-        pathway_file_path = os.path.join(self._outdir, pathway_id + '_desc.txt')
+        pathway_file_path = os.path.join(self._outdir,
+                                         pathway_id + '_desc.txt')
         if not os.path.isfile(pathway_file_path):
             raise NDExLoadSignorError(pathway_file_path + ' file missing.')
 
         with open(pathway_file_path, 'r', encoding='utf-8') as pfp:
-            signor_pathway_relations_df = pd.read_csv(pfp, dtype=str, na_filter=False, delimiter='\t',
+            signor_pathway_relations_df = pd.read_csv(pfp, dtype=str,
+                                                      na_filter=False,
+                                                      delimiter='\t',
                                                       engine='python')
 
             return signor_pathway_relations_df
@@ -1015,7 +1165,14 @@ class LoadSignorIntoNDEx(object):
         :param pathway_id:
         :return:
         """
-        df = self._get_signor_pathway_relations_df(pathway_id)
+        is_full_pathway = False
+        loadplan = self._loadplan
+        if pathway_name.startswith('Signor Full'):
+            is_full_pathway = True
+            loadplan = self._full_loadplan
+
+        df = self._get_signor_pathway_relations_df(pathway_id,
+                                                   is_full_pathway=is_full_pathway)
         # upcase column names
         rename = {}
         for column_name in df.columns:
@@ -1023,16 +1180,17 @@ class LoadSignorIntoNDEx(object):
         df = df.rename(columns=rename)
 
         network = t2n.convert_pandas_to_nice_cx_with_load_plan(df,
-                                                               self._loadplan)
+                                                               loadplan)
         report = NetworkIssueReport(pathway_name)
 
-        self._add_pathway_info(network, pathway_id)
+        self._add_pathway_info(network, pathway_id,
+                               is_full_pathway=is_full_pathway,
+                               pathway_name=pathway_name)
 
         if self._updators is not None:
             for updator in self._updators:
                 issues = updator.update(network)
                 report.addissues(updator.get_description(), issues)
-
 
         # apply style to network
         network.apply_style_from_network(self._template)
@@ -1042,7 +1200,8 @@ class LoadSignorIntoNDEx(object):
         self._add_node_types_in_network_to_report(network, report)
 
         if network_update_key is not None:
-            network.update_to(network_update_key, self._server, self._user, self._pass,
+            network.update_to(network_update_key, self._server,
+                              self._user, self._pass,
                               user_agent=self._get_user_agent())
         else:
             network.upload_to(self._server, self._user,
@@ -1110,39 +1269,80 @@ class LoadSignorIntoNDEx(object):
             typedata.append("Signalling Pathway")
         network.set_network_attribute('type', typedata, type='list_of_string')
 
-    def _add_pathway_info(self, network, pathway_id):
+    def _add_pathway_info(self, network, pathway_id,
+                          is_full_pathway=False,
+                          pathway_name=None):
         """
         Adds network
         :param network:
         :param network_id:
-        :param cytoscape_visual_properties_template_id: UUID of NDEx network to
-               extract various network attributes such as description, rightsHolder,
-               reference, rights
+        :param cytoscape_visual_properties_template_id: UUID of NDEx
+               network to
+               extract various network attributes such as description,
+               rightsHolder, reference, rights
 
         :return:
         """
-        dataframe = self._get_signor_pathway_description_df(pathway_id)
-        if dataframe is None:
-            logger.warning('Skipping ' + pathway_id)
-            return
-        if not pd.isnull(dataframe.iat[0, 1]):
-            network.set_name(dataframe.iat[0, 1])
-        if not pd.isnull(dataframe.iat[0, 0]):
-            network.set_network_attribute("labels", [dataframe.iat[0, 0]], type='list_of_string')
-        if not pd.isnull(dataframe.iat[0, 3]):
-            network.set_network_attribute("author", dataframe.iat[0, 3])
-        if not pd.isnull(dataframe.iat[0, 2]):
-            network.set_network_attribute("description",
-                                          '%s' % (dataframe.iat[0, 2]))
+        if is_full_pathway is False:
+            dataframe = self._get_signor_pathway_description_df(pathway_id)
+            if dataframe is None:
+                logger.warning('Skipping ' + pathway_id)
+                return
+            if not pd.isnull(dataframe.iat[0, 1]):
+                network.set_name(dataframe.iat[0, 1])
+            if not pd.isnull(dataframe.iat[0, 0]):
+                network.set_network_attribute("labels", [dataframe.iat[0, 0]],
+                                              type='list_of_string')
+            if not pd.isnull(dataframe.iat[0, 3]):
+                network.set_network_attribute("author", dataframe.iat[0, 3])
+            if not pd.isnull(dataframe.iat[0, 2]):
+                network.set_network_attribute("description",
+                                              '%s' % (dataframe.iat[0, 2]))
+            network.set_network_attribute("organism", "Homo Sapiens (human)")
+        else:
+            logger.info("Full pathway detected: " + str(pathway_name))
+            network.set_name(pathway_name)
+
+            network.set_network_attribute('labels', [''],
+                                          type='list_of_string')
+            network.set_network_attribute('author', '')
+            net_organism = 'Unknown'
+            if 'Human' in pathway_id:
+                net_organism = 'Human'
+                network.set_network_attribute("organism", "Homo sapiens (human)")
+            elif 'Rat' in pathway_id:
+                net_organism = 'Rat'
+                network.set_network_attribute("organism", "Rattus norvegicus (rat)")
+            elif 'Mouse' in pathway_id:
+                net_organism = 'Mouse'
+                network.set_network_attribute("organism", "Mus musculus (mouse)")
+            else:
+                logger.error('No matching organism found for: ' + pathway_id)
+
+            network.set_network_attribute('description',
+                                          'This network contains all the ' +
+                                          net_organism +
+                                          ' interactions currently available '
+                                          'in SIGNOR')
 
         network.set_network_attribute('rightsHolder', 'Prof. Gianni Cesareni ')
-        network.set_network_attribute('rights', 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)')
+        network.set_network_attribute('rights',
+                                      'Attribution-ShareAlike 4.0 '
+                                      'International (CC BY-SA 4.0)')
 
-        network.set_network_attribute("reference", '<div>Perfetto L., <i>et al.</i></div><div><b>SIGNOR: a database of causal relationships between biological entities</b><i>.</i></div><div>Nucleic Acids Res. 2016 Jan 4;44(D1):D548-54</div><div><span><a href=\"\\&#34;https://doi.org/10.1093/nar/gkv1048\\&#34;\" target=\"\\&#34;\\&#34;\">doi: 10.1093/nar/gkv1048</a></span></div>')
+        network.set_network_attribute("reference",
+                                      '<div>Perfetto L., <i>et al.</i></div>'
+                                      '<div><b>SIGNOR: a database of causal '
+                                      'relationships between biological '
+                                      'entities</b><i>.</i></div><div>Nucleic '
+                                      'Acids Res. 2016 Jan 4;44(D1):D548-54'
+                                      '</div><div><span><a href=\"\\&#34;'
+                                      'https://doi.org/10.1093/nar/gkv1048'
+                                      '\\&#34;\" target=\"\\&#34;\\&#34;\">'
+                                      'doi: 10.1093/nar/gkv1048</a></span>'
+                                      '</div>')
 
         network.set_network_attribute("version", f"{datetime.now():%d-%b-%Y}")
-
-        network.set_network_attribute("organism", "Human, 9606, Homo sapiens")
 
         # set type network attribute
         self._set_type(network)
@@ -1181,6 +1381,18 @@ class LoadSignorIntoNDEx(object):
             except NDExLoadSignorError as ne:
                 logger.exception('Unable to load pathway: ' + key +
                                  ' => ' + pathway_map[key])
+
+        # process full pathways
+        for orgname in ['Human', 'Mouse', 'Rat']:
+            pname = 'Signor Full ' + orgname
+            logger.info('Processing full ' + pname)
+            try:
+                report_list.append(self._process_pathway('full_' + orgname,
+                                                         pname))
+            except NDExLoadSignorError as ne:
+                logger.exception('Unable to load pathway: ' +
+                                 'full_' + orgname + '.txt')
+
         node_type = set()
         for entry in report_list:
             for nt in entry.get_nodetypes():
@@ -1242,6 +1454,7 @@ def main(args):
                     NodeLocationUpdator(),
                     NodeMemberUpdator(downloader.get_proteinfamily_map(),
                                       downloader.get_complexes_map()),
+                    InvalidEdgeCitationRemover(),
                     SpringLayoutUpdator()]
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)

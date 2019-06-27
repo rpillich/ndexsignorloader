@@ -705,7 +705,7 @@
   }, {
     "s" : 302,
     "applies_to" : "edge_table",
-    "n" : "MECHANISM"
+    "n" : "mechanism"
   }, {
     "s" : 302,
     "applies_to" : "edge_table",
@@ -2160,7 +2160,7 @@
   "edgeAttributes" : [ {
     "s" : 302,
     "po" : 436,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2260,7 +2260,7 @@
   }, {
     "s" : 302,
     "po" : 435,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2360,7 +2360,7 @@
   }, {
     "s" : 302,
     "po" : 434,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -2460,7 +2460,7 @@
   }, {
     "s" : 302,
     "po" : 433,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -2554,7 +2554,7 @@
   }, {
     "s" : 302,
     "po" : 432,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -2648,7 +2648,7 @@
   }, {
     "s" : 302,
     "po" : 431,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2742,7 +2742,7 @@
   }, {
     "s" : 302,
     "po" : 430,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2842,7 +2842,7 @@
   }, {
     "s" : 302,
     "po" : 429,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -2942,7 +2942,7 @@
   }, {
     "s" : 302,
     "po" : 428,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -3042,7 +3042,7 @@
   }, {
     "s" : 302,
     "po" : 427,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3136,7 +3136,7 @@
   }, {
     "s" : 302,
     "po" : 426,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3230,7 +3230,7 @@
   }, {
     "s" : 302,
     "po" : 425,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3324,7 +3324,7 @@
   }, {
     "s" : 302,
     "po" : 424,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3418,7 +3418,7 @@
   }, {
     "s" : 302,
     "po" : 423,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3512,7 +3512,7 @@
   }, {
     "s" : 302,
     "po" : 422,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3606,7 +3606,7 @@
   }, {
     "s" : 302,
     "po" : 421,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3700,7 +3700,7 @@
   }, {
     "s" : 302,
     "po" : 420,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3794,7 +3794,7 @@
   }, {
     "s" : 302,
     "po" : 419,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -3888,7 +3888,7 @@
   }, {
     "s" : 302,
     "po" : 418,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "chemical activation"
   }, {
     "s" : 302,
@@ -3982,7 +3982,7 @@
   }, {
     "s" : 302,
     "po" : 417,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "small molecule catalysis"
   }, {
     "s" : 302,
@@ -4076,7 +4076,7 @@
   }, {
     "s" : 302,
     "po" : 416,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4170,7 +4170,7 @@
   }, {
     "s" : 302,
     "po" : 415,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4264,7 +4264,7 @@
   }, {
     "s" : 302,
     "po" : 414,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4358,7 +4358,7 @@
   }, {
     "s" : 302,
     "po" : 413,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4452,7 +4452,7 @@
   }, {
     "s" : 302,
     "po" : 412,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4546,7 +4546,7 @@
   }, {
     "s" : 302,
     "po" : 411,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4640,7 +4640,7 @@
   }, {
     "s" : 302,
     "po" : 410,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4734,7 +4734,7 @@
   }, {
     "s" : 302,
     "po" : 409,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4828,7 +4828,7 @@
   }, {
     "s" : 302,
     "po" : 408,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -4922,7 +4922,7 @@
   }, {
     "s" : 302,
     "po" : 407,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5016,7 +5016,7 @@
   }, {
     "s" : 302,
     "po" : 406,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5110,7 +5110,7 @@
   }, {
     "s" : 302,
     "po" : 405,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5204,7 +5204,7 @@
   }, {
     "s" : 302,
     "po" : 404,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5298,7 +5298,7 @@
   }, {
     "s" : 302,
     "po" : 403,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5392,7 +5392,7 @@
   }, {
     "s" : 302,
     "po" : 402,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5486,7 +5486,7 @@
   }, {
     "s" : 302,
     "po" : 401,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5580,7 +5580,7 @@
   }, {
     "s" : 302,
     "po" : 400,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5674,7 +5674,7 @@
   }, {
     "s" : 302,
     "po" : 399,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5768,7 +5768,7 @@
   }, {
     "s" : 302,
     "po" : 398,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5862,7 +5862,7 @@
   }, {
     "s" : 302,
     "po" : 397,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -5956,7 +5956,7 @@
   }, {
     "s" : 302,
     "po" : 396,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6050,7 +6050,7 @@
   }, {
     "s" : 302,
     "po" : 395,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -6144,7 +6144,7 @@
   }, {
     "s" : 302,
     "po" : 394,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6238,7 +6238,7 @@
   }, {
     "s" : 302,
     "po" : 393,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6332,7 +6332,7 @@
   }, {
     "s" : 302,
     "po" : 392,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "chemical inhibition"
   }, {
     "s" : 302,
@@ -6426,7 +6426,7 @@
   }, {
     "s" : 302,
     "po" : 391,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -6520,7 +6520,7 @@
   }, {
     "s" : 302,
     "po" : 390,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional regulation"
   }, {
     "s" : 302,
@@ -6614,7 +6614,7 @@
   }, {
     "s" : 302,
     "po" : 389,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "transcriptional repression"
   }, {
     "s" : 302,
@@ -6708,7 +6708,7 @@
   }, {
     "s" : 302,
     "po" : 388,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -6802,7 +6802,7 @@
   }, {
     "s" : 302,
     "po" : 387,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -6896,7 +6896,7 @@
   }, {
     "s" : 302,
     "po" : 386,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -6990,7 +6990,7 @@
   }, {
     "s" : 302,
     "po" : 385,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -7084,7 +7084,7 @@
   }, {
     "s" : 302,
     "po" : 384,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -7178,7 +7178,7 @@
   }, {
     "s" : 302,
     "po" : 383,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7272,7 +7272,7 @@
   }, {
     "s" : 302,
     "po" : 382,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7366,7 +7366,7 @@
   }, {
     "s" : 302,
     "po" : 381,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7460,7 +7460,7 @@
   }, {
     "s" : 302,
     "po" : 380,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7554,7 +7554,7 @@
   }, {
     "s" : 302,
     "po" : 379,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7648,7 +7648,7 @@
   }, {
     "s" : 302,
     "po" : 378,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : ""
   }, {
     "s" : 302,
@@ -7742,7 +7742,7 @@
   }, {
     "s" : 302,
     "po" : 377,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7836,7 +7836,7 @@
   }, {
     "s" : 302,
     "po" : 376,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -7930,7 +7930,7 @@
   }, {
     "s" : 302,
     "po" : 375,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "relocalization"
   }, {
     "s" : 302,
@@ -8024,7 +8024,7 @@
   }, {
     "s" : 302,
     "po" : 374,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -8118,7 +8118,7 @@
   }, {
     "s" : 302,
     "po" : 373,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8212,7 +8212,7 @@
   }, {
     "s" : 302,
     "po" : 372,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8306,7 +8306,7 @@
   }, {
     "s" : 302,
     "po" : 371,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8400,7 +8400,7 @@
   }, {
     "s" : 302,
     "po" : 370,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8494,7 +8494,7 @@
   }, {
     "s" : 302,
     "po" : 369,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8588,7 +8588,7 @@
   }, {
     "s" : 302,
     "po" : 368,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8682,7 +8682,7 @@
   }, {
     "s" : 302,
     "po" : 367,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8776,7 +8776,7 @@
   }, {
     "s" : 302,
     "po" : 366,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8870,7 +8870,7 @@
   }, {
     "s" : 302,
     "po" : 365,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -8964,7 +8964,7 @@
   }, {
     "s" : 302,
     "po" : 364,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "phosphorylation"
   }, {
     "s" : 302,
@@ -9058,7 +9058,7 @@
   }, {
     "s" : 302,
     "po" : 363,
-    "n" : "MECHANISM",
+    "n" : "mechanism",
     "v" : "binding"
   }, {
     "s" : 302,
@@ -9153,265 +9153,212 @@
 }, {
   "cartesianLayout" : [ {
     "node" : 362,
-    "view" : 437,
     "x" : 543.8904371688841,
     "y" : 167.23349235544447
   }, {
     "node" : 361,
-    "view" : 437,
     "x" : -247.20743406255497,
     "y" : -259.95935810958326
   }, {
     "node" : 360,
-    "view" : 437,
     "x" : 448.9586926211341,
     "y" : 167.23349235544447
   }, {
     "node" : 359,
-    "view" : 437,
     "x" : 528.0684797442664,
     "y" : -196.67152841106872
   }, {
     "node" : 358,
-    "view" : 437,
     "x" : -247.20743406255497,
     "y" : 135.58957750617992
   }, {
     "node" : 357,
-    "view" : 437,
     "x" : 844.5076282367809,
     "y" : -259.95935810958326
   }, {
     "node" : 356,
-    "view" : 437,
     "x" : -41.52198754233541,
     "y" : -259.95935810958326
   }, {
     "node" : 355,
-    "view" : 437,
     "x" : -41.52198754233541,
     "y" : 214.69936462932674
   }, {
     "node" : 354,
-    "view" : 437,
     "x" : 53.409757005414576,
     "y" : 214.69936462932674
   }, {
     "node" : 353,
-    "view" : 437,
     "x" : 148.34150155319367,
     "y" : 167.23349235544447
   }, {
     "node" : 352,
-    "view" : 437,
     "x" : -152.27568951473222,
     "y" : -259.95935810958326
   }, {
     "node" : 351,
-    "view" : 437,
     "x" : -152.27568951473222,
     "y" : -196.67152841106872
   }, {
     "node" : 350,
-    "view" : 437,
     "x" : -152.27568951473222,
     "y" : -133.38369871252507
   }, {
     "node" : 349,
-    "view" : 437,
     "x" : 417.314777771855,
     "y" : -196.67152841106872
   }, {
     "node" : 348,
-    "view" : 437,
     "x" : 290.739118374855,
     "y" : -22.62999674009916
   }, {
     "node" : 347,
-    "view" : 437,
     "x" : 100.8756292793114,
     "y" : -22.62999674009916
   }, {
     "node" : 346,
-    "view" : 437,
     "x" : 417.314777771855,
     "y" : -70.09586901403964
   }, {
     "node" : 345,
-    "view" : 437,
     "x" : 290.739118374855,
     "y" : 72.30174780760717
   }, {
     "node" : 344,
-    "view" : 437,
     "x" : 195.80737382710504,
     "y" : 9.01391810910718
   }, {
     "node" : 343,
-    "view" : 437,
     "x" : 749.5758836890891,
     "y" : -323.2471878080978
   }, {
     "node" : 342,
-    "view" : 437,
     "x" : -41.52198754233541,
     "y" : -323.2471878080978
   }, {
     "node" : 341,
-    "view" : 437,
     "x" : 623.0002242920164,
     "y" : 277.9871943278122
   }, {
     "node" : 340,
-    "view" : 437,
     "x" : 623.0002242920164,
     "y" : 214.69936462932674
   }, {
     "node" : 339,
-    "view" : 437,
     "x" : 782.9170532226562,
     "y" : 272.86846923828125
   }, {
     "node" : 338,
-    "view" : 437,
     "x" : 749.5758836890891,
     "y" : -259.95935810958326
   }, {
     "node" : 337,
-    "view" : 437,
     "x" : -41.52198754233541,
     "y" : 277.9871943278122
   }, {
     "node" : 336,
-    "view" : 437,
     "x" : 53.409757005414576,
     "y" : 277.9871943278122
   }, {
     "node" : 335,
-    "view" : 437,
     "x" : -152.27568951473222,
     "y" : -70.09586901403964
   }, {
     "node" : 334,
-    "view" : 437,
     "x" : -41.52198754233541,
     "y" : 135.58957750617992
   }, {
     "node" : 333,
-    "view" : 437,
     "x" : 417.314777771855,
     "y" : -133.38369871252507
   }, {
     "node" : 332,
-    "view" : 437,
     "x" : -15.627067565917969,
     "y" : -71.13166896946584
   }, {
     "node" : 331,
-    "view" : 437,
     "x" : 195.80737382710504,
     "y" : -70.09586901403964
   }, {
     "node" : 330,
-    "view" : 437,
     "x" : -442.50115966796875,
     "y" : 348.7841444625113
   }, {
     "node" : 329,
-    "view" : 437,
     "x" : -361.77490234375,
     "y" : 341.2289123535156
   }, {
     "node" : 328,
-    "view" : 437,
     "x" : -441.7166442871094,
     "y" : 463.693115234375
   }, {
     "node" : 327,
-    "view" : 437,
     "x" : 439.751953125,
     "y" : 365.95611572265625
   }, {
     "node" : 326,
-    "view" : 437,
     "x" : 505.84824146943924,
     "y" : 368.03851318359375
   }, {
     "node" : 325,
-    "view" : 437,
     "x" : 651.7437744140625,
     "y" : 348.144775390625
   }, {
     "node" : 324,
-    "view" : 437,
     "x" : 595.978271484375,
     "y" : 371.0224671919918
   }, {
     "node" : 323,
-    "view" : 437,
     "x" : 663.7965267405789,
     "y" : 410.80975341796875
   }, {
     "node" : 322,
-    "view" : 437,
     "x" : -170.76531982421875,
     "y" : 472.5465087890625
   }, {
     "node" : 321,
-    "view" : 437,
     "x" : -174.5854034423828,
     "y" : 537.4378051757812
   }, {
     "node" : 320,
-    "view" : 437,
     "x" : -172.2909393310547,
     "y" : 402.8994445800781
   }, {
     "node" : 319,
-    "view" : 437,
     "x" : 342.8999561982996,
     "y" : 360.0810546875
   }, {
     "node" : 318,
-    "view" : 437,
     "x" : -4.338199615478516,
     "y" : 359.08636474609375
   }, {
     "node" : 317,
-    "view" : 437,
     "x" : 113.47752829159003,
     "y" : 357.09698486328125
   }, {
     "node" : 316,
-    "view" : 437,
     "x" : 194.95167092715985,
     "y" : 357.09698486328125
   }, {
     "node" : 315,
-    "view" : 437,
     "x" : 276.4258135627297,
     "y" : 357.09698486328125
   }, {
     "node" : 314,
-    "view" : 437,
     "x" : -4.338199615478516,
     "y" : 439.7259826660156
   }, {
     "node" : 313,
-    "view" : 437,
     "x" : 805.3751831054688,
     "y" : 379.9322509765625
   }, {
     "node" : 312,
-    "view" : 437,
     "x" : -4.338198661804199,
     "y" : 395.1133117675781
   } ]
 }, {
   "cyVisualProperties" : [ {
     "properties_of" : "network",
-    "applies_to" : 437,
-    "view" : 437,
     "properties" : {
       "NETWORK_ANNOTATION_SELECTION" : "false",
       "NETWORK_BACKGROUND_PAINT" : "#FFFFFF",
@@ -9428,8 +9375,6 @@
     }
   }, {
     "properties_of" : "nodes:default",
-    "applies_to" : 437,
-    "view" : 437,
     "properties" : {
       "COMPOUND_NODE_PADDING" : "10.0",
       "COMPOUND_NODE_SHAPE" : "ROUND_RECTANGLE",
@@ -9547,8 +9492,6 @@
     }
   }, {
     "properties_of" : "edges:default",
-    "applies_to" : 437,
-    "view" : 437,
     "properties" : {
       "EDGE_CURVED" : "true",
       "EDGE_LABEL_COLOR" : "#000000",
@@ -9585,35 +9528,13 @@
       },
       "EDGE_TARGET_ARROW_SHAPE" : {
         "type" : "DISCRETE",
-        "definition" : "COL=MECHANISM,T=string,K=0=transcriptional repression,V=0=T,K=1=binding,V=1=SQUARE,K=2=chemical inhibition,V=2=T"
+        "definition" : "COL=mechanism,T=string,K=0=transcriptional repression,V=0=T,K=1=binding,V=1=SQUARE,K=2=chemical inhibition,V=2=T"
       },
       "EDGE_UNSELECTED_PAINT" : {
         "type" : "DISCRETE",
         "definition" : "COL=interaction,T=string,K=0=up-regulates quantity,V=0=#0099FF,K=1=form complex,V=1=#00CC66,K=2=down-regulates quantity by destabilization,V=2=#990066,K=3=down-regulates activity,V=3=#990066,K=4=up-regulates activity,V=4=#0099FF,K=5=down-regulates quantity by repression,V=5=#990066,K=6=up-regulates quantity by stabilization,V=6=#0099FF,K=7=up-regulates,V=7=#0099FF,K=8=down-regulates,V=8=#990066,K=9=up-regulates quantity by expression,V=9=#0099FF,K=10=unknown,V=10=#000000"
       }
     }
-  } ]
-}, {
-  "cySubNetworks" : [ {
-    "@id" : 302,
-    "nodes" : [ 362, 361, 360, 359, 358, 357, 356, 355, 354, 353, 352, 351, 350, 349, 348, 347, 346, 345, 344, 343, 342, 341, 340, 339, 338, 337, 336, 335, 334, 333, 332, 331, 330, 329, 328, 327, 326, 325, 324, 323, 322, 321, 320, 319, 318, 317, 316, 315, 314, 313, 312 ],
-    "edges" : [ 436, 435, 434, 433, 432, 431, 430, 429, 428, 427, 426, 425, 424, 423, 422, 421, 420, 419, 418, 417, 416, 415, 414, 413, 412, 411, 410, 409, 408, 407, 406, 405, 404, 403, 402, 401, 400, 399, 398, 397, 396, 395, 394, 393, 392, 391, 390, 389, 388, 387, 386, 385, 384, 383, 382, 381, 380, 379, 378, 377, 376, 375, 374, 373, 372, 371, 370, 369, 368, 367, 366, 365, 364, 363 ]
-  } ]
-}, {
-  "cyViews" : [ {
-    "@id" : 437,
-    "s" : 302
-  } ]
-}, {
-  "cyNetworkRelations" : [ {
-    "p" : 302,
-    "c" : 437,
-    "r" : "view",
-    "name" : "WNT Signaling.cx view"
-  }, {
-    "c" : 302,
-    "r" : "subnetwork",
-    "name" : "WNT Signaling.cx"
   } ]
 }, {
   "metaData" : [ {
@@ -9638,18 +9559,9 @@
     "elementCount" : 3,
     "name" : "cyVisualProperties"
   }, {
-    "elementCount" : 1,
-    "name" : "cySubNetworks"
-  }, {
-    "elementCount" : 1,
-    "name" : "cyViews"
-  }, {
     "elementCount" : 0,
     "name" : "cyGroups"
-  }, {
-    "elementCount" : 2,
-    "name" : "cyNetworkRelations"
-  } ]
+  }]
 }, {
   "status" : [ {
     "error" : "",

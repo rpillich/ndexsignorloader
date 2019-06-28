@@ -41,7 +41,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description="Python Boilerplate contains all the boilerplate you need to create a Python NDEx Content Loader package.",
+    description="Loads SIGNOR data into NDEx",
     install_requires=requirements,
     license="BSD license",
     long_description=readme + '\n\n' + history,

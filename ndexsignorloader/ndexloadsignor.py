@@ -1234,7 +1234,8 @@ class LoadSignorIntoNDEx(object):
         """
         network.set_network_attribute(NORMALIZATIONVERSION_ATTRIB, '0.1')
 
-    def _set_wasderivedfrom(self, network, pathway_id):
+    def _set_wasderivedfrom(self, network, pathway_id,
+                            is_full_pathway=False):
         """
         Sets the 'prov:wasDerivedBy' network attribute to the
         ftp location containing the OWL file for this network.
@@ -1246,11 +1247,13 @@ class LoadSignorIntoNDEx(object):
         :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
         :return: None
         """
-        network.set_network_attribute(DERIVED_FROM_ATTRIB,
-                                      'https://signor.uniroma2.it/'
-                                      'pathway_browser.php?organism=&'
-                                      'pathway_list=' +
-                                      str(pathway_id))
+        derivedurl = 'https://signor.uniroma2.it'
+        if is_full_pathway is False:
+            derivedurl = derivedurl +\
+                         '/pathway_browser.php?organism=&' +\
+                         'pathway_list=' + str(pathway_id)
+
+        network.set_network_attribute(DERIVED_FROM_ATTRIB, derivedurl)
 
     def _set_type(self, network):
         """
@@ -1294,7 +1297,10 @@ class LoadSignorIntoNDEx(object):
                 network.set_network_attribute("labels", [dataframe.iat[0, 0]],
                                               type='list_of_string')
             if not pd.isnull(dataframe.iat[0, 3]):
-                network.set_network_attribute("author", dataframe.iat[0, 3])
+                auth_val = dataframe.iat[0, 3]
+                if auth_val is not None and len(auth_val) > 0:
+                    network.set_network_attribute("author",
+                                                  dataframe.iat[0, 3])
             if not pd.isnull(dataframe.iat[0, 2]):
                 network.set_network_attribute("description",
                                               '%s' % (dataframe.iat[0, 2]))
@@ -1303,9 +1309,6 @@ class LoadSignorIntoNDEx(object):
             logger.info("Full pathway detected: " + str(pathway_name))
             network.set_name(pathway_name)
 
-            network.set_network_attribute('labels', [''],
-                                          type='list_of_string')
-            network.set_network_attribute('author', '')
             net_organism = 'Unknown'
             if 'Human' in pathway_id:
                 net_organism = 'Human'
@@ -1354,7 +1357,8 @@ class LoadSignorIntoNDEx(object):
         self._set_normalization_version(network)
 
         # set was derived from
-        self._set_wasderivedfrom(network, str(pathway_id))
+        self._set_wasderivedfrom(network, str(pathway_id),
+                                 is_full_pathway=is_full_pathway)
 
     def run(self):
         """

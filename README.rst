@@ -40,17 +40,17 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **7\)** The following network attributes are set
 
-* **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the Full networks which have a more generic description)
-* **author** is set to data from Signor service **getPathwayData.php?pathway=**
+* **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full networks which have a more generic description)
+* **author** is set to data from Signor service **getPathwayData.php?pathway=** (unless its empty in which case its not added to network)
 * **organism** is set to **Human, 9606, Homo sapiens** (except for Full Rat and Mouse networks)
 * **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
-* **prov:wasDerivedFrom** set to URL to download data file
+* **prov:wasDerivedFrom** set to URL to download data file (or in case of full networks its set to Signor site)
 * **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)
 * **description** is taken from Signor service **getPathwayData.php?pathway=**
 * **rightsHolder** is set to **Prof. Gianni Cesareni**
 * **rights** is set to **Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)**
 * **reference** is set to citation for **SIGNOR: a database of causal relationships between biological entities**
-* **labels** is set to data from Signor service **getPathwayData.php?pathway=**
+* **labels** is set to data from Signor service **getPathwayData.php?pathway=** (not set for full networks)
 * **type** is set to a list with **pathway** and if known type of pathway
 * **__normalizationversion** is set to **0.1**
 

@@ -4,4 +4,4 @@
 
 __author__ = """Chris Churas"""
 __email__ = 'contact@ndexbio.org'
-__version__ = '0.2.0'
+__version__ = '1.0.0'

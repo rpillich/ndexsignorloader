@@ -999,14 +999,11 @@ class RedundantEdgeCollapser(NetworkUpdator):
 
     def __init__(self):
         """
-
-        :param disablcitededgemerge: If True then merging of neighbor-of
-                                     edge citations to more descriptive
-                                     edges is NOT done (default False)
-        :type disablcitededgemerge: bool
+        Constructor
 
         """
         super(RedundantEdgeCollapser, self).__init__()
+        self._pubmedurl = None
 
     def get_description(self):
         """
@@ -1025,14 +1022,21 @@ class RedundantEdgeCollapser(NetworkUpdator):
         :type edgeid: int
         :return: None
         """
+        # remove edge
         network.remove_edge(edgeid)
 
         # remove edge attributes for deleted edge
         net_attrs = network.get_edge_attributes(edgeid)
         if net_attrs is None:
             return
+        remove_list = []
         for net_attr in net_attrs:
-            network.remove_edge_attribute(edgeid, net_attr['n'])
+            remove_list.append(net_attr['n'])
+        for attr_name in remove_list:
+            logger.debug('Removing ' + str(net_attr['n']) +
+                         ' from ' + str(edgeid))
+            network.remove_edge_attribute(edgeid, attr_name)
+        del remove_list
 
     def _add_to_edge_map(self, edge_map, edgeid, sourceid, targetid):
         """
@@ -1127,6 +1131,22 @@ class RedundantEdgeCollapser(NetworkUpdator):
             attr_dict[entry['n']] = (thevalue, thetype)
         return attr_dict
 
+    def _get_citation_from_edge_dict(self, e_dict):
+        """
+
+        :param e_dict:
+        :return:
+        """
+        new_cite = ''
+        for cite_str in e_dict['citation'][0]:
+            pubmedid = cite_str[cite_str.index(':')+1:]
+            if self._pubmedurl is None:
+                new_cite = new_cite + ' '
+            else:
+                new_cite = (new_cite + self._pubmedurl + pubmedid + '">' + pubmedid +
+                            '</a> ')
+        return new_cite
+
     def _append_attributes_to_dict(self, edge_dict, e_attribs):
         """
 
@@ -1135,18 +1155,25 @@ class RedundantEdgeCollapser(NetworkUpdator):
         :return:
         """
         e_dict = self._convert_attributes_to_dict(e_attribs)
+        logger.info('Attributes to e_dict: ' + str(e_dict))
         for key in e_dict.keys():
             if key not in edge_dict:
                 return 'Found unexpected new attribute in edge: ' + str(edge_dict)
+
+            thevalue = e_dict[key][0]
             if key == 'sentence':
-                thevalue = e_dict['citation'][0] + ' ' + edge_dict[key]
+                cite_str = self._get_citation_from_edge_dict(e_dict) + ' '
+                if isinstance(thevalue, list):
+                    for valitem in thevalue:
+                        edge_dict[key][0].add(cite_str + valitem)
+                else:
+                    edge_dict[key][0].add(cite_str + thevalue)
             else:
-                thevalue = e_dict[key][0]
-            if isinstance(thevalue, list):
-                for valitem in thevalue:
-                    edge_dict[key][0].add(valitem)
-            else:
-                edge_dict[key][0].add(thevalue)
+                if isinstance(thevalue, list):
+                    for valitem in thevalue:
+                        edge_dict[key][0].add(valitem)
+                else:
+                    edge_dict[key][0].add(thevalue)
 
     def _update_edge_with_dict(self, network, collapsed_edge, edge_dict):
         """
@@ -1187,7 +1214,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         collapsed_edge = edgeset.pop()
         c_eattrib = network.get_edge_attributes(collapsed_edge)
         edge_dict = self._convert_attributes_to_dict_with_set(c_eattrib)
-
+        logger.info('edge dict: ' + str(edge_dict))
         for edge in edgeset:
             # migrate all attribute data to collapsed_edge
             e_attribs = network.get_edge_attributes(edge)
@@ -1200,6 +1227,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         msgs = self._update_edge_with_dict(network, collapsed_edge, edge_dict)
         if msgs is not None and len(msgs) > 0:
             issues.extend(msgs)
+        del edge_dict
         return issues
 
     def _iterate_through_edge_map(self, network,
@@ -1227,6 +1255,14 @@ class RedundantEdgeCollapser(NetworkUpdator):
                         issues.extend(cur_issues)
         return issues
 
+    def _set_pubmedurl_from_network(self, network):
+        """
+
+        :param network:
+        :return:
+        """
+        self._pubmedurl = json.loads(network.get_network_attribute('@context')['v'])['pubmed']
+
     def update(self, network):
         """
         Examines all edges in network and removes redundant
@@ -1247,15 +1283,18 @@ class RedundantEdgeCollapser(NetworkUpdator):
         """
         if network is None:
             return ['Network passed in is None']
+
+        self._set_pubmedurl_from_network(network)
+
         issues = []
         edge_dict = self._build_edge_map(network)
         for key in edge_dict.keys():
             logger.debug('Iterating through edges '
                          'with interaction type: ' + key)
             issues = self._iterate_through_edge_map(network, edge_dict[key])
-            # del edge_dict[key]
-
+        del edge_dict
         return issues
+
 
 class LoadSignorIntoNDEx(object):
     """

@@ -1007,7 +1007,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
 
     def get_description(self):
         """
-
+        Gets description of this network updator
         :return:
         """
         return 'Collapses redundant edges'
@@ -1099,7 +1099,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         that are for attributes and creates a dict of
         form:
 
-        ['attributename'] = (set(value), type)
+        ['attributename'] = (value, type)
         :param attr_list:
         :return:
         """

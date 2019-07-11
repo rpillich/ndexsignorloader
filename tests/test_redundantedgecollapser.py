@@ -107,3 +107,45 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
         self.assertEqual({0: {1: {0, 1}}}, edge_dict['something'])
         self.assertEqual({0: {1: {2}}}, edge_dict['foo'])
 
+    def test_convert_attributes_to_dict(self):
+        collapser = RedundantEdgeCollapser()
+
+        # test on single item attribute list
+        attr_list = [{'n': 'name1', 'v': 'value1',
+                      'd': 'string'}]
+        attr_dict = collapser._convert_attributes_to_dict(attr_list)
+
+        self.assertEqual(('value1', 'string'), attr_dict['name1'])
+
+        # try a second item
+        attr_list.append({'n': 'name2', 'v': ['value2'],
+                          'd': 'list_of_string'})
+
+        attr_dict = collapser._convert_attributes_to_dict(attr_list)
+
+        self.assertEqual(('value1', 'string'), attr_dict['name1'])
+        self.assertEqual((['value2'], 'list_of_string'),
+                         attr_dict['name2'])
+
+    def test_convert_attributes_to_dict_with_set(self):
+        collapser = RedundantEdgeCollapser()
+
+        # test on single item attribute list
+        attr_list = [{'n': 'name1', 'v': 'value1',
+                      'd': 'string'}]
+        attr_dict = collapser._convert_attributes_to_dict_with_set(attr_list)
+
+        self.assertEqual(({'value1'}, 'string'), attr_dict['name1'])
+
+        # try a second item
+        attr_list.append({'n': 'name2', 'v': ['value2'],
+                          'd': 'list_of_string'})
+
+        attr_dict = collapser._convert_attributes_to_dict_with_set(attr_list)
+
+        self.assertEqual(({'value1'}, 'string'), attr_dict['name1'])
+        self.assertEqual(({'value2'}, 'list_of_string'),
+                         attr_dict['name2'])
+
+
+

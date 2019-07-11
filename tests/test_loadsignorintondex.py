@@ -53,3 +53,50 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
                                    is_full_pathway=True)
         res = net.get_network_attribute(ndexloadsignor.DERIVED_FROM_ATTRIB)
         self.assertEqual('https://signor.uniroma2.it', res['v'])
+
+    def test_set_iconurl(self):
+        fargs = FakeArgs()
+        fargs.conf = 'hi'
+        fargs.profile = 'profile'
+        fargs.datadir = '/foo'
+        fargs.iconurl = 'hi'
+        loader = LoadSignorIntoNDEx(fargs, None)
+        net = NiceCXNetwork()
+        loader._set_iconurl(net)
+        res = net.get_network_attribute('__iconurl')
+        self.assertEqual('hi', res['v'])
+
+    def test_set_type(self):
+        fargs = FakeArgs()
+        fargs.conf = 'hi'
+        fargs.profile = 'profile'
+        fargs.datadir = '/foo'
+
+        loader = LoadSignorIntoNDEx(fargs, None)
+
+        net = NiceCXNetwork()
+
+        # test default
+        net.set_name('foo')
+        loader._set_type(net)
+        res = net.get_network_attribute('networkType')
+        self.assertEqual(['pathway', 'Signalling Pathway'], res['v'])
+
+        # test disease pathway
+        net.set_name('fsgs')
+        loader._set_type(net)
+        res = net.get_network_attribute('networkType')
+        self.assertEqual(['pathway', 'Disease Pathway'], res['v'])
+
+        # test cancer pathway
+        net.set_name('prostate cancer')
+        loader._set_type(net)
+        res = net.get_network_attribute('networkType')
+        self.assertEqual(['pathway', 'Cancer Pathway'], res['v'])
+
+        #test interactome True
+        net.set_name('some name')
+        loader._set_type(net, is_human_fullpathway=True)
+        res = net.get_network_attribute('networkType')
+        self.assertEqual(['interactome', 'pathway',
+                          'Signalling Pathway'], res['v'])

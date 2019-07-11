@@ -34,6 +34,9 @@ LOG_FORMAT = "%(asctime)-15s %(levelname)s %(relativeCreated)dms " \
              "%(filename)s::%(funcName)s():%(lineno)d %(message)s"
 
 
+ICON_URL = 'https://signor.uniroma2.it/img/signor_logo.png'
+ICONURL_ATTRIB = '__iconurl'
+
 LOAD_PLAN = 'loadplan.json'
 """
 Name of file containing json load plan
@@ -138,6 +141,10 @@ def _parse_arguments(desc, args):
                         help='Path to NDEx CX file to use for styling'
                              'networks',
                         default=get_style())
+    parser.add_argument('--iconurl',
+                        help='Sets network attribute value __iconurl '
+                             '(default ' + ICON_URL + ')',
+                        default=ICON_URL)
     parser.add_argument('--skipdownload', action='store_true',
                         help='If set, skips download of data from signor'
                              'and assumes data already resides in <datadir>'
@@ -984,6 +991,272 @@ class NodeMemberUpdator(NetworkUpdator):
         return issues
 
 
+class RedundantEdgeCollapser(NetworkUpdator):
+    """
+    Examines network and collapses edges as
+    described in :py:func:`~RedundantEdgeCollapser.update`
+    """
+
+    def __init__(self):
+        """
+
+        :param disablcitededgemerge: If True then merging of neighbor-of
+                                     edge citations to more descriptive
+                                     edges is NOT done (default False)
+        :type disablcitededgemerge: bool
+
+        """
+        super(RedundantEdgeCollapser, self).__init__()
+
+    def get_description(self):
+        """
+
+        :return:
+        """
+        return 'Collapses redundant edges'
+
+    def _remove_edge(self, network, edgeid):
+        """
+        Removes edge and its attributes
+
+        :param network: network with edge
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :param edgeid:
+        :type edgeid: int
+        :return: None
+        """
+        network.remove_edge(edgeid)
+
+        # remove edge attributes for deleted edge
+        net_attrs = network.get_edge_attributes(edgeid)
+        if net_attrs is None:
+            return
+        for net_attr in net_attrs:
+            network.remove_edge_attribute(edgeid, net_attr['n'])
+
+    def _add_to_edge_map(self, edge_map, edgeid, sourceid, targetid):
+        """
+        Updates `edge_map` in place with new entry.
+        Structure of edge_map
+        will be created as follows:
+
+        edge_map[sourceid][targetid] = set(edgeid)
+
+        :param edge_map: edge map to update, should be a empty dict to start
+        :type edge_map: dict
+        :param edgeid: id of edge
+        :type edgeid: int
+        :param sourceid: id of source node
+        :type sourceid: int
+        :param targetid: id of target node
+        :type targetid: int
+        :return: None
+        """
+        if not sourceid in edge_map:
+            edge_map[sourceid] = {}
+
+        if edge_map[sourceid].get(targetid) is None:
+            edge_map[sourceid][targetid] = set()
+
+        if edgeid not in edge_map[sourceid][targetid]:
+            edge_map[sourceid][targetid].add(edgeid)
+
+    def _build_edge_map(self, network):
+        """
+        Iterates through all edges and examines interaction 'i'
+        field creating a master dictionary with key set to
+        interaction and value set to a dict with following
+        structure:
+
+
+        edge_map[source node id][target node id] = set(edge id)
+
+        :param network: network to extract edges from
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: dict with key of interaction and value is a dict of edge_map
+        :rtype: dict
+        """
+        edge_dict = {}
+        for k, v in network.get_edges():
+            s = v['s']
+            t = v['t']
+            i = v['i']
+            if i not in edge_dict:
+                edge_dict[i] = {}
+            edge_map = edge_dict[i]
+
+            self._add_to_edge_map(edge_map, k, s, t)
+
+        return edge_dict
+
+    def _convert_attributes_to_dict(self, attr_list):
+        """
+        This method takes a list of dicts in CX format
+        that are for attributes and creates a dict of
+        form:
+
+        ['attributename'] = (set(value), type)
+        :param attr_list:
+        :return:
+        """
+        attr_dict = {}
+        for entry in attr_list:
+            attr_dict[entry['n']] = (entry['v'], entry['d'])
+        return attr_dict
+
+    def _convert_attributes_to_dict_with_set(self, attr_list):
+        """
+        This method takes a list of dicts in CX format
+        that are for attributes and creates a dict of
+        form:
+
+        ['attributename'] = (set(value), type)
+        :param attr_list:
+        :return:
+        """
+        attr_dict = {}
+        for entry in attr_list:
+            thetype = entry['d']
+            if isinstance(entry['v'], list):
+                thevalue = set()
+                for curval in entry['v']:
+                    thevalue.add(curval)
+            else:
+                thevalue = set()
+                thevalue.add(entry['v'])
+            attr_dict[entry['n']] = (thevalue, thetype)
+        return attr_dict
+
+    def _append_attributes_to_dict(self, edge_dict, e_attribs):
+        """
+
+        :param edge_dict:
+        :param e_attribs:
+        :return:
+        """
+        e_dict = self._convert_attributes_to_dict(e_attribs)
+        for key in e_dict.keys():
+            if key not in edge_dict:
+                return 'Found unexpected new attribute in edge: ' + str(edge_dict)
+            if key == 'sentence':
+                thevalue = e_dict['citation'][0] + ' ' + edge_dict[key]
+            else:
+                thevalue = e_dict[key][0]
+            if isinstance(thevalue, list):
+                for valitem in thevalue:
+                    edge_dict[key][0].add(valitem)
+            else:
+                edge_dict[key][0].add(thevalue)
+
+    def _update_edge_with_dict(self, network, collapsed_edge, edge_dict):
+        """
+
+        :param network:
+        :param collapsed_edge: id of future collapsed edge
+        :param edge_dict:
+        :return:
+        """
+        issues = []
+        for key in edge_dict:
+            network.remove_edge_attribute(collapsed_edge, key)
+            if key == 'direct':
+                if len(edge_dict[key][0]) > 1:
+                    issues.append(key +
+                                  ' attribute has multiple values: ' +
+                                  str(edge_dict[key][0]))
+
+                network.set_edge_attribute(collapsed_edge, key,
+                                           edge_dict[key][0].pop(),
+                                           type='boolean')
+                continue
+            network.set_edge_attribute(collapsed_edge, key,
+                                       list(edge_dict[key][0]),
+                                       type='list_of_string')
+        return issues
+
+    def _collapse_edgeset(self, network, edgeset):
+        """
+        Given a set of edges collapse these down
+        to one edge by converting attributes to a
+        list and merging those attributes in.
+
+        :param edgeset:
+        :return:
+        """
+        issues = []
+        collapsed_edge = edgeset.pop()
+        c_eattrib = network.get_edge_attributes(collapsed_edge)
+        edge_dict = self._convert_attributes_to_dict_with_set(c_eattrib)
+
+        for edge in edgeset:
+            # migrate all attribute data to collapsed_edge
+            e_attribs = network.get_edge_attributes(edge)
+            msg = self._append_attributes_to_dict(edge_dict, e_attribs)
+            if msg is not None and len(msg) > 0:
+                issues.append(msg)
+            # remove this edge
+            self._remove_edge(network, edge)
+
+        msgs = self._update_edge_with_dict(network, collapsed_edge, edge_dict)
+        if msgs is not None and len(msgs) > 0:
+            issues.extend(msgs)
+        return issues
+
+    def _iterate_through_edge_map(self, network,
+                                  edge_map):
+        """
+        Iterate through 'edge_dict' which is a dict of this
+        structure:
+
+        [source node id][target node id] => set(edge id)
+
+        and remove any edges and edge attributes
+        that are in 'other_edge_exists' if they do NOT
+        have any citations that are unique to this edge
+        :param network:
+        :param edge_map:
+        :return:
+        """
+        issues = []
+        for srckey in edge_map.keys():
+            for tarkey in edge_map[srckey].keys():
+                if len(edge_map[srckey][tarkey]) > 1:
+                    cur_issues = self._collapse_edgeset(network,
+                                                        edge_map[srckey][tarkey])
+                    if cur_issues is not None:
+                        issues.extend(cur_issues)
+        return issues
+
+    def update(self, network):
+        """
+        Examines all edges in network and removes redundant
+        edges following this algorithm:
+
+        Remove neighbor-of edges if there is another more descriptive
+        edge (anything other then neighbor-of) to the same nodes
+        UNLESS this edge has unique citations
+
+        Remove controls-state-change-of edges if there is another more
+        descriptive edge (anything other then neighbor-of) to the same
+        nodes UNLESS this edge has unique citations
+
+        :param network: network to update
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: list of issues as strings encountered
+        :rtype: list
+        """
+        if network is None:
+            return ['Network passed in is None']
+        issues = []
+        edge_dict = self._build_edge_map(network)
+        for key in edge_dict.keys():
+            logger.debug('Iterating through edges '
+                         'with interaction type: ' + key)
+            issues = self._iterate_through_edge_map(network, edge_dict[key])
+            # del edge_dict[key]
+
+        return issues
+
 class LoadSignorIntoNDEx(object):
     """
     Class to load content
@@ -1255,7 +1528,8 @@ class LoadSignorIntoNDEx(object):
 
         network.set_network_attribute(DERIVED_FROM_ATTRIB, derivedurl)
 
-    def _set_type(self, network):
+    def _set_type(self, network,
+                  is_human_fullpathway=False):
         """
         Sets type network attribute adding a list with 'pathway' and an additional
         value based on name of network.
@@ -1263,14 +1537,30 @@ class LoadSignorIntoNDEx(object):
         :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
         :return: None
         """
-        typedata = ['pathway']
+        typedata = []
+        if is_human_fullpathway is True:
+            typedata.append('interactome')
+
+        typedata.append('pathway')
+
         if network.get_name().upper() in LoadSignorIntoNDEx.DISEASE_PATHWAYS:
             typedata.append("Disease Pathway")
         elif network.get_name().upper() in LoadSignorIntoNDEx.CANCER_PATHWAYS:
             typedata.append("Cancer Pathway")
         else:
             typedata.append("Signalling Pathway")
-        network.set_network_attribute('type', typedata, type='list_of_string')
+        network.set_network_attribute('networkType', typedata, type='list_of_string')
+
+    def _set_iconurl(self, network):
+        """
+        Sets the network attribute :py:const:`ICONURL_ATTRIB` with
+        value from self._args.iconurl passed in constructor
+        :param network: network to add attribute
+        :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return:
+        """
+        network.set_network_attribute(ICONURL_ATTRIB,
+                                      self._args.iconurl)
 
     def _add_pathway_info(self, network, pathway_id,
                           is_full_pathway=False,
@@ -1286,6 +1576,8 @@ class LoadSignorIntoNDEx(object):
 
         :return:
         """
+        is_human_fullpathway = False
+
         if is_full_pathway is False:
             dataframe = self._get_signor_pathway_description_df(pathway_id)
             if dataframe is None:
@@ -1313,6 +1605,7 @@ class LoadSignorIntoNDEx(object):
             if 'Human' in pathway_id:
                 net_organism = 'Human'
                 network.set_network_attribute("organism", "Homo sapiens (human)")
+                is_human_fullpathway = True
             elif 'Rat' in pathway_id:
                 net_organism = 'Rat'
                 network.set_network_attribute("organism", "Rattus norvegicus (rat)")
@@ -1348,7 +1641,12 @@ class LoadSignorIntoNDEx(object):
         network.set_network_attribute("version", f"{datetime.now():%d-%b-%Y}")
 
         # set type network attribute
-        self._set_type(network)
+        self._set_type(network,
+                       is_human_fullpathway=is_human_fullpathway)
+
+        if is_full_pathway is True:
+            # set iconurl
+            self._set_iconurl(network)
 
         # set provenance for network
         self._set_generatedby_in_network_attributes(network)
@@ -1459,6 +1757,7 @@ def main(args):
                     NodeMemberUpdator(downloader.get_proteinfamily_map(),
                                       downloader.get_complexes_map()),
                     InvalidEdgeCitationRemover(),
+                    RedundantEdgeCollapser(),
                     SpringLayoutUpdator()]
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)

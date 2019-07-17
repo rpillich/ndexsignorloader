@@ -1131,6 +1131,16 @@ class RedundantEdgeCollapser(NetworkUpdator):
             attr_dict[entry['n']] = (thevalue, thetype)
         return attr_dict
 
+    def _get_citation_html_frag(self, pubmedurl, pubmedid):
+        """
+
+        :param pubmedid:
+        :return:
+        """
+        return '<a target="_blank" href="' +\
+               pubmedurl + pubmedid +'">' + pubmedid +\
+               '</a>'
+
     def _get_citation_from_edge_dict(self, e_dict):
         """
 
@@ -1143,10 +1153,9 @@ class RedundantEdgeCollapser(NetworkUpdator):
             if self._pubmedurl is None:
                 new_cite = new_cite + ' '
             else:
-                new_cite = (new_cite + '<a href="' +
-                            self._pubmedurl + pubmedid +
-                            '">' + pubmedid +
-                            '</a>')
+                new_cite = (new_cite +
+                            self._get_citation_html_frag(self._pubmedurl,
+                                                         pubmedid) + ' ')
         return new_cite
 
     def _append_attributes_to_dict(self, edge_dict, e_attribs):
@@ -1216,6 +1225,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         collapsed_edge = edgeset.pop()
         c_eattrib = network.get_edge_attributes(collapsed_edge)
         edge_dict = self._convert_attributes_to_dict_with_set(c_eattrib)
+
         logger.info('edge dict: ' + str(edge_dict))
         for edge in edgeset:
             # migrate all attribute data to collapsed_edge
@@ -1250,7 +1260,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         issues = []
         for srckey in edge_map.keys():
             for tarkey in edge_map[srckey].keys():
-                if len(edge_map[srckey][tarkey]) > 1:
+                if len(edge_map[srckey][tarkey]) > 0:
                     cur_issues = self._collapse_edgeset(network,
                                                         edge_map[srckey][tarkey])
                     if cur_issues is not None:

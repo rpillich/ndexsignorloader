@@ -1143,8 +1143,10 @@ class RedundantEdgeCollapser(NetworkUpdator):
             if self._pubmedurl is None:
                 new_cite = new_cite + ' '
             else:
-                new_cite = (new_cite + self._pubmedurl + pubmedid + '">' + pubmedid +
-                            '</a> ')
+                new_cite = (new_cite + '<a href="' +
+                            self._pubmedurl + pubmedid +
+                            '">' + pubmedid +
+                            '</a>')
         return new_cite
 
     def _append_attributes_to_dict(self, edge_dict, e_attribs):

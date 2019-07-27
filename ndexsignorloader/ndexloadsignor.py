@@ -1138,7 +1138,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         :return:
         """
         return '<a target="_blank" href="' +\
-               pubmedurl + pubmedid +'">' + pubmedid +\
+               pubmedurl + pubmedid + '">' + pubmedid +\
                '</a>'
 
     def _get_citation_from_edge_dict(self, e_dict):

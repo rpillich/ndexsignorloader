@@ -2,6 +2,13 @@
 History
 =======
 
+1.0.0 (2019-)
+-------------------
+
+* On edges, replaced location attribute value of phenotypesList with empty string NSU-75
+
+* Added __iconurl network attribute and renamed type network attribute to networkType
+
 0.2.0 (2019-06-28)
 ------------------
 

@@ -626,9 +626,12 @@ class UpdatePrefixesForNodeRepresents(NetworkUpdator):
 
 class NodeLocationUpdator(NetworkUpdator):
     """
-    Replace any empty node Compartment attribute values with cytoplasm
+    Replace any empty node Location attribute values with cytoplasm and
+    replace andy phenotypesList Location attribute values with empty
+    string
     """
     CYTOPLASM = 'cytoplasm'
+    PHENOTYPESLIST = 'phenotypesList'
     LOCATION = 'location'
 
     def __init__(self):
@@ -648,8 +651,9 @@ class NodeLocationUpdator(NetworkUpdator):
 
     def update(self, network):
         """
-        Iterates through nodes and updates 'compartment' attribute
-        if its empty by setting it to 'cytoplasm'
+        Iterates through nodes and updates 'location' attribute
+        if its empty it to 'cytoplasm' or if its 'phenotypesList' set
+        it to empty string
 
         :param network: network to examine
         :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
@@ -675,6 +679,8 @@ class NodeLocationUpdator(NetworkUpdator):
                 continue
             if node_attr['v'] is None or node_attr['v'] == '':
                 node_attr['v'] = NodeLocationUpdator.CYTOPLASM
+            elif node_attr['v'] == NodeLocationUpdator.PHENOTYPESLIST:
+                node_attr['v'] = ''
         return issues
 
 
@@ -748,7 +754,7 @@ class SpringLayoutUpdator(NetworkUpdator):
             elif node_attr['v'] == SpringLayoutUpdator.FACTOR:
                 node_pos[nodeid] = (self._get_random_x_position(),
                                     self._max/2.0)
-            elif node_attr['v'] == SpringLayoutUpdator.PHENOTYPESLIST:
+            elif node_attr['v'] == '':
                 node_pos[nodeid] = (self._get_random_x_position(),
                                     self._max)
 

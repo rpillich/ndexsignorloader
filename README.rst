@@ -26,7 +26,7 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **3\)** Using values in the **databasea** and **databaseb** data files, the **represents** field found on each node is prefixed with **uniprot:** if the database value is **UNIPROT** and **signor:** if the database value is **SIGNOR**
 
-**4\)** The **location** node attribute is set to **cytoplasm** if its not set (which is case for all nodes in **FULL-Human, Full-Rat, and Full-Mouse** networks)
+**4\)** The **location** node attribute is set to **cytoplasm** if its not set (which is case for all nodes in **Signor Complete - Human, Signor Complete - Rat, and Signor Complete - Mouse** networks)
 
 **5\)** The **location** node attribute with value **phenotypeList** is set to empty string
 
@@ -44,7 +44,7 @@ This tool downloads data files from Signor_ and performs the following operation
 
 * **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full/complete networks which have a more generic description)
 * **author** is set to data from Signor service **getPathwayData.php?pathway=** (unless its empty in which case its not added to network)
-* **organism** is set to **Human, 9606, Homo sapiens** (except for full/complete Rat and Mouse networks)
+* **organism** is set to **Human, 9606, Homo sapiens** (except for **Signor Complete - Rat, and Signor Complete - Mouse** networks)
 * **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
 * **prov:wasDerivedFrom** set to URL to download data file (or in case of full networks its set to Signor site)
 * **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)

@@ -158,5 +158,9 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
         self.assertEqual(({'value2'}, 'list_of_string'),
                          attr_dict['name2'])
 
+    def test_get_citation_from_edge_dict(self):
+        collapser = RedundantEdgeCollapser()
+        edge_dict = {'citation': (['123'], 'list_of_string')}
 
+        # collapser._
 

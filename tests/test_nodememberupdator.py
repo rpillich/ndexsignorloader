@@ -112,8 +112,8 @@ class TestNodeMemberUpdator(unittest.TestCase):
         updator = NodeMemberUpdator(pfdict, cdict,
                                     genesearcher=mock)
         res = updator.update(net)
-        self.assertTrue("No entry in proteinfamily map for node: {'@id': 4, 'n': 'x', 'r': 'x'}" in res)
-        self.assertTrue("No entry in complexes map for node: {'@id': 5, 'n': 'y', 'r': 'y'}" in res)
+        self.assertTrue("No entry in proteinfamily map for node: {" in res[0])
+        self.assertTrue("No entry in complexes map for node: {" in res[1])
 
         res = net.get_node_attribute(aid, NodeMemberUpdator.MEMBER)
         self.assertTrue('hgnc.symbol:AA' in res['v'])

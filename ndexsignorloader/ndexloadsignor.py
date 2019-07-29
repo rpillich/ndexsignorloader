@@ -1719,7 +1719,8 @@ class LoadSignorIntoNDEx(object):
                                       'doi: 10.1093/nar/gkv1048</a></span>'
                                       '</div>')
 
-        network.set_network_attribute("version", f"{datetime.now():%d-%b-%Y}")
+        dtime = datetime.now().strftime('%d-%b-%Y')
+        network.set_network_attribute("version", dtime)
 
         # set type network attribute
         self._set_type(network,

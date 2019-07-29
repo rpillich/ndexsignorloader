@@ -137,9 +137,15 @@ def _parse_arguments(desc, args):
                                        NDExUtilConfig.CONFIG_FILE)
     parser.add_argument('--loadplan', help='Use alternate load plan file',
                         default=get_load_plan())
+    parser.add_argument('--visibility', default='PUBLIC',
+                        choices=['PUBLIC', 'PRIVATE'],
+                        help='Sets visibility of new '
+                             'networks, default (PUBLIC)')
     parser.add_argument('--style',
                         help='Path to NDEx CX file to use for styling'
-                             'networks',
+                             'networks, or NDEx UUID which must be '
+                             'accessible and on same server as'
+                             'those specified by the credentials',
                         default=get_style())
     parser.add_argument('--iconurl',
                         help='Sets network attribute value __iconurl '
@@ -690,7 +696,7 @@ class SpringLayoutUpdator(NetworkUpdator):
     """
     CARTESIAN_LAYOUT = 'cartesianLayout'
 
-    PHENOTYPESLIST = 'phenotypesList'
+    PHENOTYPESLIST = ''
     FACTOR = 'factor'
     CYTOPLASM = 'cytoplasm'
     RECEPTOR = 'receptor'
@@ -1114,27 +1120,30 @@ class RedundantEdgeCollapser(NetworkUpdator):
             attr_dict[entry['n']] = (entry['v'], entry['d'])
         return attr_dict
 
-    def _convert_attributes_to_dict_with_set(self, attr_list):
+    def _convert_attributes_to_dict_with_set(self, edge_dict):
         """
-        This method takes a list of dicts in CX format
-        that are for attributes and creates a dict of
-        form:
+        This method takes a dict of format:
+
+        ['attributename'] = (value, type)
+
+        and creates:
 
         ['attributename'] = (set(value), type)
+
         :param attr_list:
         :return:
         """
         attr_dict = {}
-        for entry in attr_list:
-            thetype = entry['d']
-            if isinstance(entry['v'], list):
+        for key in edge_dict.keys():
+            thetype = edge_dict[key][1]
+            if thetype == 'list_of_string':
                 thevalue = set()
-                for curval in entry['v']:
+                for curval in edge_dict[key][0]:
                     thevalue.add(curval)
             else:
                 thevalue = set()
-                thevalue.add(entry['v'])
-            attr_dict[entry['n']] = (thevalue, thetype)
+                thevalue.add(edge_dict[key][0])
+            attr_dict[key] = (thevalue, thetype)
         return attr_dict
 
     def _get_citation_html_frag(self, pubmedurl, pubmedid):
@@ -1144,7 +1153,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         :return:
         """
         return '<a target="_blank" href="' +\
-               pubmedurl + pubmedid + '">' + pubmedid +\
+               pubmedurl + pubmedid + '">pubmed:' + pubmedid +\
                '</a>'
 
     def _get_citation_from_edge_dict(self, e_dict):
@@ -1230,7 +1239,9 @@ class RedundantEdgeCollapser(NetworkUpdator):
         issues = []
         collapsed_edge = edgeset.pop()
         c_eattrib = network.get_edge_attributes(collapsed_edge)
-        edge_dict = self._convert_attributes_to_dict_with_set(c_eattrib)
+        c_edict = self._convert_attributes_to_dict(c_eattrib)
+        edge_dict = self._convert_attributes_to_dict_with_set(c_edict)
+        del c_edict
 
         logger.info('edge dict: ' + str(edge_dict))
         for edge in edgeset:
@@ -1256,9 +1267,9 @@ class RedundantEdgeCollapser(NetworkUpdator):
 
         [source node id][target node id] => set(edge id)
 
-        and remove any edges and edge attributes
-        that are in 'other_edge_exists' if they do NOT
-        have any citations that are unique to this edge
+        and collapse edges so there is only one edge
+        between two nodes
+
         :param network:
         :param edge_map:
         :return:
@@ -1348,6 +1359,7 @@ class LoadSignorIntoNDEx(object):
         self._net_summaries = None
         self._downloader = downloader
         self._updators = updators
+        self._visibility = args.visibility
 
     def _parse_config(self):
             """
@@ -1397,7 +1409,17 @@ class LoadSignorIntoNDEx(object):
         Loads the CX network specified by self._args.style into self._template
         :return:
         """
-        self._template = ndex2.create_nice_cx_from_file(os.path.abspath(self._args.style))
+        if not os.path.isfile(self._args.style):
+            res = self._ndex.get_network_as_cx_stream(self._args.style)
+            if res.status_code != 200:
+                raise NDExLoadSignorError(str(self._args.style) +
+                                          ' was not found on the filesystem ' +
+                                          'so it was assumed to be a NDEx ' +
+                                          ' UUID but got http code: ' +
+                                          str(res.status_code) + ' from server')
+            self._template = ndex2.create_nice_cx_from_raw_cx(res.json())
+        else:
+            self._template = ndex2.create_nice_cx_from_file(os.path.abspath(self._args.style))
 
     def _load_network_summaries_for_user(self):
         """
@@ -1497,7 +1519,7 @@ class LoadSignorIntoNDEx(object):
         """
         is_full_pathway = False
         loadplan = self._loadplan
-        if pathway_name.startswith('Signor Full'):
+        if pathway_name.startswith('Signor Complete'):
             is_full_pathway = True
             loadplan = self._full_loadplan
 
@@ -1530,13 +1552,13 @@ class LoadSignorIntoNDEx(object):
         self._add_node_types_in_network_to_report(network, report)
 
         if network_update_key is not None:
+
             network.update_to(network_update_key, self._server,
                               self._user, self._pass,
                               user_agent=self._get_user_agent())
         else:
-            network.upload_to(self._server, self._user,
-                              self._pass,
-                              user_agent=self._get_user_agent())
+            self._ndex.save_new_network(network.to_cx(),
+                                        visibility=self._visibility)
         return report
 
     def _set_generatedby_in_network_attributes(self, network):
@@ -1743,7 +1765,7 @@ class LoadSignorIntoNDEx(object):
 
         # process full pathways
         for orgname in ['Human', 'Mouse', 'Rat']:
-            pname = 'Signor Full ' + orgname
+            pname = 'Signor Complete - ' + orgname
             logger.info('Processing full ' + pname)
             try:
                 report_list.append(self._process_pathway('full_' + orgname,
@@ -1814,7 +1836,6 @@ def main(args):
                     NodeMemberUpdator(downloader.get_proteinfamily_map(),
                                       downloader.get_complexes_map()),
                     InvalidEdgeCitationRemover(),
-                    RedundantEdgeCollapser(),
                     SpringLayoutUpdator()]
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)

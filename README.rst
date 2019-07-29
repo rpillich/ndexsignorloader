@@ -40,13 +40,13 @@ This tool downloads data files from Signor_ and performs the following operation
 * **receptor** are below **extracellular**
 * **cytoplasm** are placed in the middle
 * **factor** are below **cytoplasm**
-* If attribute is empty nodes are placed at the bottom
+* If attribute is empty, nodes are placed at the bottom
 
 **8\)** The following network attributes are set
 
-* **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full networks which have a more generic description)
+* **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full/complete networks which have a more generic description)
 * **author** is set to data from Signor service **getPathwayData.php?pathway=** (unless its empty in which case its not added to network)
-* **organism** is set to **Human, 9606, Homo sapiens** (except for Full Rat and Mouse networks)
+* **organism** is set to **Human, 9606, Homo sapiens** (except for full/complete Rat and Mouse networks)
 * **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
 * **prov:wasDerivedFrom** set to URL to download data file (or in case of full networks its set to Signor site)
 * **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)

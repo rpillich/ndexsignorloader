@@ -31,6 +31,7 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
         fargs.conf = 'hi'
         fargs.profile = 'profile'
         fargs.datadir = '/foo'
+        fargs.visibility = 'PUBLIC'
 
         loader = LoadSignorIntoNDEx(fargs, None)
         net = NiceCXNetwork()
@@ -60,6 +61,8 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
         fargs.profile = 'profile'
         fargs.datadir = '/foo'
         fargs.iconurl = 'hi'
+        fargs.visibility = 'PUBLIC'
+
         loader = LoadSignorIntoNDEx(fargs, None)
         net = NiceCXNetwork()
         loader._set_iconurl(net)
@@ -71,6 +74,7 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
         fargs.conf = 'hi'
         fargs.profile = 'profile'
         fargs.datadir = '/foo'
+        fargs.visibility = 'PUBLIC'
 
         loader = LoadSignorIntoNDEx(fargs, None)
 

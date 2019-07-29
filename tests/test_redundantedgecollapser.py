@@ -26,6 +26,19 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
         self.assertEqual('Collapses redundant edges',
                          collapser.get_description())
 
+    def test_get_citation_html_frag(self):
+        collapser = RedundantEdgeCollapser()
+        res = collapser._get_citation_html_frag('pubmedurl/', 'pubmedid')
+        self.assertEqual('<a target="_blank" href="pubmedurl/pubmedid">'
+                         'pubmed:pubmedid</a>',
+                         res)
+
+    def test_set_pubmedurl_from_network(self):
+        collapser = RedundantEdgeCollapser()
+        net = NiceCXNetwork()
+        # net.set_network_attribute('@context', values=)
+        pass
+
     def test_remove_edge(self):
         collapser = RedundantEdgeCollapser()
         net = NiceCXNetwork()
@@ -131,17 +144,15 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
         collapser = RedundantEdgeCollapser()
 
         # test on single item attribute list
-        attr_list = [{'n': 'name1', 'v': 'value1',
-                      'd': 'string'}]
-        attr_dict = collapser._convert_attributes_to_dict_with_set(attr_list)
+        edge_dict = {'name1': ('value1', 'string')}
+        attr_dict = collapser._convert_attributes_to_dict_with_set(edge_dict)
 
         self.assertEqual(({'value1'}, 'string'), attr_dict['name1'])
 
         # try a second item
-        attr_list.append({'n': 'name2', 'v': ['value2'],
-                          'd': 'list_of_string'})
+        edge_dict['name2'] = (['value2'], 'list_of_string')
 
-        attr_dict = collapser._convert_attributes_to_dict_with_set(attr_list)
+        attr_dict = collapser._convert_attributes_to_dict_with_set(edge_dict)
 
         self.assertEqual(({'value1'}, 'string'), attr_dict['name1'])
         self.assertEqual(({'value2'}, 'list_of_string'),

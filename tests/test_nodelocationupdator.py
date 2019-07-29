@@ -57,6 +57,12 @@ class TestNodeLocationUpdator(unittest.TestCase):
                                NodeLocationUpdator.LOCATION,
                                'blah')
 
+        ph_attr = net.create_node('anothernode', node_represents='rep3')
+
+        net.set_node_attribute(ph_attr,
+                               NodeLocationUpdator.LOCATION,
+                               NodeLocationUpdator.PHENOTYPESLIST)
+
         self.assertEqual([],
                          updator.update(net))
 
@@ -68,3 +74,7 @@ class TestNodeLocationUpdator(unittest.TestCase):
 
         self.assertEqual('blah',
                          net.get_node_attribute(o_attr, comp_attr)['v'])
+
+        self.assertEqual('',
+                         net.get_node_attribute(ph_attr, comp_attr)['v'])
+

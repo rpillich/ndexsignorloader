@@ -2,8 +2,13 @@
 History
 =======
 
-1.0.0 (2019-)
+0.3.0 (2019-07-29)
 -------------------
+
+* Added commandline flag **--visibility** that lets user dictate whether NEW networks are public or private (default is public)
+
+* Signor Full Human, Signor Full Rat, and Signor Full Mouse networks have been renamed
+  to Signor Complete - Human, Signor Complete - Rat, Signor Complete - Mouse
 
 * On edges, replaced location attribute value of phenotypesList with empty string NSU-75
 

@@ -9,8 +9,6 @@ History
   minus **direct** into lists. For **sentence** attribute each entry is in its
   list is now prepended with href link to citation labeled pubmed:####
 
-
-
 0.3.0 (2019-07-29)
 -------------------
 

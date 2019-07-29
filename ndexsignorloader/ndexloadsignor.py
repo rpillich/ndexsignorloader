@@ -137,6 +137,8 @@ def _parse_arguments(desc, args):
                                        NDExUtilConfig.CONFIG_FILE)
     parser.add_argument('--loadplan', help='Use alternate load plan file',
                         default=get_load_plan())
+    parser.add_argument('--edgecollapse', action='store_true',
+                        help='If sets edges are collapsed as')
     parser.add_argument('--visibility', default='PUBLIC',
                         choices=['PUBLIC', 'PRIVATE'],
                         help='Sets visibility of new '
@@ -1835,8 +1837,14 @@ def main(args):
                     NodeLocationUpdator(),
                     NodeMemberUpdator(downloader.get_proteinfamily_map(),
                                       downloader.get_complexes_map()),
-                    InvalidEdgeCitationRemover(),
-                    SpringLayoutUpdator()]
+                    InvalidEdgeCitationRemover()]
+
+        # add edge collapse updator if flag is set
+        if theargs.edgecollapse is True:
+            updators.append(RedundantEdgeCollapser())
+
+        updators.append(SpringLayoutUpdator())
+
         loader = LoadSignorIntoNDEx(theargs, downloader,
                                     updators=updators)
         return loader.run()

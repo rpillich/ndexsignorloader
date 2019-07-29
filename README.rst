@@ -32,7 +32,9 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **6\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
 
-**7\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **location** node attribute. The ordering is as follows:
+**7\)** If **--edgecollapse** flag is set on commandline, then edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
+
+**8\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **location** node attribute. The ordering is as follows:
 
 * **extracellular** are placed at the top
 * **receptor** are below **extracellular**
@@ -40,7 +42,7 @@ This tool downloads data files from Signor_ and performs the following operation
 * **factor** are below **cytoplasm**
 * If attribute is empty, nodes are placed at the bottom
 
-**8\)** The following network attributes are set
+**9\)** The following network attributes are set
 
 * **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full/complete networks which have a more generic description)
 * **author** is set to data from Signor service **getPathwayData.php?pathway=** (unless its empty in which case its not added to network)

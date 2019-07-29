@@ -28,11 +28,9 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **4\)** The **location** node attribute is set to **cytoplasm** if its not set (which is case for all nodes in **FULL-Human, Full-Rat, and Full-Mouse** networks)
 
-**4b\)** The **location** node attribute with value **phenotypeList** is set to empty string
+**5\)** The **location** node attribute with value **phenotypeList** is set to empty string
 
-**5\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
-
-**6\)** Edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
+**6\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
 
 **7\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **location** node attribute. The ordering is as follows:
 
@@ -161,7 +159,7 @@ Via Docker
 
 .. code-block::
 
-   docker run -v `pwd`:`pwd` -w `pwd` coleslawndex/ndexsignorloader:0.1.0 ndexloadsignor.py --conf conf # TODO Add other needed arguments here
+   docker run -v `pwd`:`pwd` -w `pwd` coleslawndex/ndexsignorloader:0.3.0 ndexloadsignor.py --conf conf # TODO Add other needed arguments here
 
 
 Credits

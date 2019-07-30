@@ -26,6 +26,39 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
+    def test_parse_config(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            cfile = os.path.join(temp_dir, 'conf')
+            with open(cfile, 'w') as f:
+                f.write('[hi]\n')
+                f.write('user=theuser\n')
+                f.write('password=thep\n')
+                f.write('server=thes\n')
+            fargs = FakeArgs()
+            fargs.conf = cfile
+            fargs.profile = 'hi'
+            fargs.datadir = temp_dir
+            fargs.visibility = 'PUBLIC'
+            loader = LoadSignorIntoNDEx(fargs, None)
+            loader._parse_config()
+            self.assertEqual('theuser', loader._user)
+            self.assertEqual('thep', loader._pass)
+            self.assertEqual('thes', loader._server)
+        finally:
+            shutil.rmtree(temp_dir)
+
+    def test_get_user_agent(self):
+        fargs = FakeArgs()
+        fargs.conf = '/ho'
+        fargs.profile = 'hi'
+        fargs.datadir = '/'
+        fargs.visibility = 'PUBLIC'
+        fargs.version = '0.3.0'
+        loader = LoadSignorIntoNDEx(fargs, None)
+        res = loader._get_user_agent()
+        self.assertEqual('ndexsignorloader/0.3.0', res)
+
     def test_wasderivedfrom(self):
         fargs = FakeArgs()
         fargs.conf = 'hi'

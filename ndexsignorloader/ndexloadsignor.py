@@ -37,6 +37,8 @@ LOG_FORMAT = "%(asctime)-15s %(levelname)s %(relativeCreated)dms " \
 ICON_URL = 'https://signor.uniroma2.it/img/signor_logo.png'
 ICONURL_ATTRIB = '__iconurl'
 
+NOTES_ATTRIB = 'notes'
+
 LOAD_PLAN = 'loadplan.json'
 """
 Name of file containing json load plan
@@ -1712,12 +1714,28 @@ class LoadSignorIntoNDEx(object):
         """
         Sets the network attribute :py:const:`ICONURL_ATTRIB` with
         value from self._args.iconurl passed in constructor
+
         :param network: network to add attribute
         :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
         :return:
         """
         network.set_network_attribute(ICONURL_ATTRIB,
                                       self._args.iconurl)
+
+    def _set_edgecollapse_notes(self, network):
+        """
+        Adds network attribute named :py:const:`NOTES_ATTRIB` with
+        value set to description of edge collapse
+
+        :param network: network to add attribute
+        :type :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return:
+        """
+        if self._args.edgecollapse:
+            network.set_network_attribute(NOTES_ATTRIB,
+                                          'Edges have been collapsed with '
+                                          'attributes converted to lists with'
+                                          ' exception of direct attribute')
 
     def _add_pathway_info(self, network, pathway_id,
                           is_full_pathway=False,
@@ -1815,6 +1833,10 @@ class LoadSignorIntoNDEx(object):
         # set was derived from
         self._set_wasderivedfrom(network, str(pathway_id),
                                  is_full_pathway=is_full_pathway)
+
+        # writes out network attribute describing
+        # edge collapse if it was performed
+        self._set_edgecollapse_notes(network)
 
     def run(self):
         """

@@ -32,7 +32,8 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **6\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
 
-**7\)** If **--edgecollapse** flag is set on commandline, then edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
+**7\)** **IF** **--edgecollapse** flag is set on commandline, then edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
+        In addition, a network attribute named **notes** is added with following text: **Edges have been collapsed with attributes converted to lists with exception of direct attribute**
 
 **8\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **location** node attribute. The ordering is as follows:
 

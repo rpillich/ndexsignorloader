@@ -59,6 +59,32 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
         res = loader._get_user_agent()
         self.assertEqual('ndexsignorloader/0.3.0', res)
 
+    def test_set_edgecollapse_notes_with_edgecollapse_true(self):
+        fargs = FakeArgs()
+        fargs.conf = '/ho'
+        fargs.profile = 'hi'
+        fargs.datadir = '/'
+        fargs.visibility = 'PUBLIC'
+        fargs.edgecollapse = True
+        loader = LoadSignorIntoNDEx(fargs, None)
+        net = NiceCXNetwork()
+        loader._set_edgecollapse_notes(net)
+        res = net.get_network_attribute(ndexloadsignor.NOTES_ATTRIB)
+        self.assertTrue('Edges have been' in res['v'])
+
+    def test_set_edgecollapse_notes_with_edgecollapse_false(self):
+        fargs = FakeArgs()
+        fargs.conf = '/ho'
+        fargs.profile = 'hi'
+        fargs.datadir = '/'
+        fargs.visibility = 'PUBLIC'
+        fargs.edgecollapse = False
+        loader = LoadSignorIntoNDEx(fargs, None)
+        net = NiceCXNetwork()
+        loader._set_edgecollapse_notes(net)
+        res = net.get_network_attribute(ndexloadsignor.NOTES_ATTRIB)
+        self.assertEqual(None, res)
+
     def test_wasderivedfrom(self):
         fargs = FakeArgs()
         fargs.conf = 'hi'

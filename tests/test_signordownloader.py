@@ -9,8 +9,10 @@ import shutil
 from mock import MagicMock
 
 import unittest
+import requests_mock
 from ndex2.nice_cx_network import NiceCXNetwork
 from ndexsignorloader.ndexloadsignor import SignorDownloader
+from ndexsignorloader.ndexloadsignor import NDExLoadSignorError
 
 
 class TestSignorDownloader(unittest.TestCase):
@@ -122,3 +124,72 @@ SIGNOR-C2;mTORC2;"P68104,  Q8TB45"
                          'yo',
                          dloader._get_fulldownload_url('yo'))
 
+    def test_download_entity_file_success(self):
+        dloader = SignorDownloader('http://hi', None)
+        temp_dir = tempfile.mkdtemp()
+        try:
+            with requests_mock.mock() as m:
+                m.post('http://hi/' + SignorDownloader.DOWNLOAD_COMPLEXES,
+                       status_code=200,
+                       text='hehe')
+                tfile = os.path.join(temp_dir, 'hi')
+                dloader._download_entity_file('entitytype', tfile)
+                self.assertEqual(True, os.path.isfile(tfile))
+                with open(tfile, 'r') as f:
+                    self.assertEqual('hehe', f.read())
+        finally:
+            shutil.rmtree(temp_dir)
+
+    def test_download_entity_file_error(self):
+        dloader = SignorDownloader('http://hi', None)
+        with requests_mock.mock() as m:
+            m.post('http://hi/' + SignorDownloader.DOWNLOAD_COMPLEXES,
+                   status_code=500,
+                   text='hehe')
+            try:
+                dloader._download_entity_file('entitytype', 'foo')
+                self.fail('Expected NDExLoadSignorError')
+            except NDExLoadSignorError as ne:
+                self.assertEqual('Got status code of 500 from signor',
+                                 str(ne))
+
+    def test_download_pathways_list_success(self):
+        temp_dir = tempfile.mkdtemp()
+        dloader = SignorDownloader('http://hi', temp_dir)
+
+        try:
+            with requests_mock.mock() as m:
+                m.get('http://hi/' + SignorDownloader.PATHWAYDATA_SCRIPT,
+                       status_code=200,
+                       text='hehe')
+                tfile = dloader.get_pathway_list_file()
+                dloader._download_pathways_list()
+                self.assertEqual(True,
+                                 os.path.isfile(tfile))
+                with open(tfile, 'r') as f:
+                    self.assertEqual('hehe', f.read())
+        finally:
+            shutil.rmtree(temp_dir)
+
+    def test_download_pathways_list_error(self):
+        dloader = SignorDownloader('http://hi', None)
+        with requests_mock.mock() as m:
+            m.get('http://hi/' + SignorDownloader.PATHWAYDATA_SCRIPT,
+                   status_code=500,
+                   text='hehe')
+            try:
+                dloader._download_pathways_list()
+                self.fail('Expected NDExLoadSignorError')
+            except NDExLoadSignorError as ne:
+                self.assertEqual('Got status code of 500 from signor',
+                                 str(ne))
+
+    def test_download_file_where_file_exists(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            tfile = os.path.join(temp_dir, 'hi')
+            open(tfile, 'a').close()
+            dloader = SignorDownloader('http://hi', tfile)
+            dloader._download_file('http://hi', tfile)
+        finally:
+            shutil.rmtree(temp_dir)

@@ -215,6 +215,7 @@ class SignorDownloader(object):
     def __init__(self, signorurl, outdir):
         """
         Constructor
+
         :param signorurl: base SIGNOR URL
         :type signorurl: string
         :param outdir: directory where files will be downloaded to
@@ -234,6 +235,7 @@ class SignorDownloader(object):
     def get_proteinfamily_file(self):
         """
         Gets complexes file containing mapping of protein families to genes
+
         :return:
         """
         return os.path.join(self._outdir,
@@ -242,6 +244,7 @@ class SignorDownloader(object):
     def get_complexes_file(self):
         """
         Gets complexes file containing mapping of protein families to genes
+
         :return:
         """
         return os.path.join(self._outdir,
@@ -253,6 +256,7 @@ class SignorDownloader(object):
         to be either a SIGNOR proteinfamily or SIGNOR complexes file
         create a dictionary with key set to contents of row in second column
         and values set to comma split and trimmed list in 3rd column
+
         :param entityfile:
         :return:
         """
@@ -283,8 +287,13 @@ class SignorDownloader(object):
 
     def _download_entity_file(self, entity_data_type, destfile):
         """
-        Gets map of pathways
-        :return: dict
+        Downloads entity file
+
+        :param entity_data_type: entity data type
+        :type entity_data_type: str
+        :param destfile: path where entity file should be downloaded to
+        :type destfile: str
+        :return: None
         """
         logger.info('Downloading ' + entity_data_type)
         postdata = {'Content-Disposition': 'form-data; name="submit"',
@@ -303,6 +312,7 @@ class SignorDownloader(object):
     def _download_pathways_list(self):
         """
         Gets map of pathways
+
         :return: dict
         """
         logger.info("Downloading pathways list")
@@ -318,6 +328,7 @@ class SignorDownloader(object):
     def get_pathways_map(self):
         """
         Gets map from :py:const:`SignorDownloader.PATHWAY_LIST_FILE` file
+
         :return:
         """
         path_map = {}
@@ -330,10 +341,14 @@ class SignorDownloader(object):
 
     def _get_download_url(self, pathway_id, relationsonly=False):
         """
+        Builds download URL
 
-        :param pathway_id:
-        :param relationsonly:
-        :return:
+        :param pathway_id: id of pathway
+        :type pathway_id: str
+        :param relationsonly: if True appends &relations=only to URL
+        :type relationsonly: bool
+        :return: download URL
+        :rtype: str
         """
         if relationsonly is False:
             relationssuffix = ''
@@ -346,10 +361,14 @@ class SignorDownloader(object):
 
     def _download_file(self, download_url, destfile):
         """
+        Downloads file pointed to by 'download_url' to
+        'destfile'
 
-        :param theurl:
-        :param destfile:
-        :return:
+        :param theurl: link to download
+        :type theurl: str
+        :param destfile: path to file to write contents of 'theurl' to
+        :type destfile: str
+        :return: None
         """
         if os.path.isfile(destfile):
             logger.info(destfile + ' exists. Skipping...')

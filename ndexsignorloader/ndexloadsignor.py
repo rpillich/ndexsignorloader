@@ -140,7 +140,10 @@ def _parse_arguments(desc, args):
     parser.add_argument('--loadplan', help='Use alternate load plan file',
                         default=get_load_plan())
     parser.add_argument('--edgecollapse', action='store_true',
-                        help='If sets edges are collapsed as')
+                        help='If set, edges with same interaction type '
+                             'are collapsed and attribute values are'
+                             'turned into lists except for "direct" which '
+                             'is left as a bool')
     parser.add_argument('--visibility', default='PUBLIC',
                         choices=['PUBLIC', 'PRIVATE'],
                         help='Sets visibility of new '

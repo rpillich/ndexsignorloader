@@ -206,4 +206,103 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
                          res['sentence'][0])
         self.assertEqual('string', res['sentence'][1])
 
+    def test_update_edge_with_dict(self):
+        collapser = RedundantEdgeCollapser()
+        net = NiceCXNetwork()
+
+        eid = net.create_edge(edge_source=0, edge_target=1,
+                              edge_interaction='something')
+        net.set_edge_attribute(eid, 'sentence', 'hi', type='string')
+
+        edge_dict = {'citation': (set(['pubmed:123']), 'list_of_string'),
+                     'sentence': (set(['sentence1', 'sentence2']), 'string'),
+                     'direct': (set([True, False]), 'boolean')}
+
+        res = collapser._update_edge_with_dict(net, eid, edge_dict)
+
+        self.assertTrue('direct attribute has multiple values:' in res[0])
+
+        edata = net.get_edge_attribute(eid, 'citation')
+        self.assertEqual('list_of_string', edata['d'])
+        self.assertEqual(['pubmed:123'], edata['v'])
+
+        edata = net.get_edge_attribute(eid, 'sentence')
+        self.assertEqual('list_of_string', edata['d'])
+        self.assertTrue('sentence1' in edata['v'])
+        self.assertTrue('sentence2' in edata['v'])
+        self.assertEqual(2, len(edata['v']))
+
+        edata = net.get_edge_attribute(eid, 'direct')
+        self.assertEqual('boolean', edata['d'])
+        self.assertEqual(False, edata['v'])
+
+    def test_collapse_edgeset(self):
+        collapser = RedundantEdgeCollapser()
+
+        net = NiceCXNetwork()
+        ctext = {'pubmed': 'http://p/'}
+        net.set_network_attribute('@context', values=json.dumps(ctext))
+        collapser._set_pubmedurl_from_network(net)
+
+        eid = net.create_edge(edge_source=0, edge_target=1,
+                              edge_interaction='something')
+
+        net.set_edge_attribute(eid, 'sentence', 'sent1', type='string')
+        net.set_edge_attribute(eid, 'direct', True, type='boolean')
+        net.set_edge_attribute(eid, 'citation', 'pubmed:123', type='string')
+
+        eidtwo = net.create_edge(edge_source=0, edge_target=1,
+                              edge_interaction='something')
+        net.set_edge_attribute(eidtwo, 'sentence', 'sent2', type='string')
+        net.set_edge_attribute(eidtwo, 'direct', True, type='boolean')
+        net.set_edge_attribute(eidtwo, 'citation', 'pubmed:456', type='string')
+
+        issues = collapser._collapse_edgeset(net, set([eid, eidtwo]))
+        self.assertEqual([], issues)
+
+        edata = net.get_edge_attribute(eid, 'sentence')
+        self.assertEqual(2, len(edata['v']))
+
+        self.assertTrue('<a target="_blank" href="http://p/456">'
+                        'pubmed:456</a>  sent2' in edata['v'])
+        self.assertTrue('<a target="_blank" href="http://p/123">'
+                        'pubmed:123</a> sent1' in edata['v'])
+
+    def test_update_none_passed_in(self):
+        collapser = RedundantEdgeCollapser()
+        res = collapser.update(None)
+        self.assertEqual(['Network passed in is None'], res)
+
+    def test_update(self):
+        collapser = RedundantEdgeCollapser()
+        net = NiceCXNetwork()
+        ctext = {'pubmed': 'http://p/'}
+        net.set_network_attribute('@context', values=json.dumps(ctext))
+        collapser._set_pubmedurl_from_network(net)
+
+        eid = net.create_edge(edge_source=0, edge_target=1,
+                              edge_interaction='something')
+
+        net.set_edge_attribute(eid, 'sentence', 'sent1', type='string')
+        net.set_edge_attribute(eid, 'direct', True, type='boolean')
+        net.set_edge_attribute(eid, 'citation', 'pubmed:123', type='string')
+
+        eidtwo = net.create_edge(edge_source=0, edge_target=1,
+                                 edge_interaction='something')
+        net.set_edge_attribute(eidtwo, 'sentence', 'sent2', type='string')
+        net.set_edge_attribute(eidtwo, 'direct', True, type='boolean')
+        net.set_edge_attribute(eidtwo, 'citation', 'pubmed:456', type='string')
+        res = collapser.update(net)
+
+        self.assertEqual([], res)
+
+        edata = net.get_edge_attribute(eid, 'sentence')
+        self.assertEqual(2, len(edata['v']))
+
+        self.assertTrue('<a target="_blank" href="http://p/456">'
+                        'pubmed:456</a>  sent2' in edata['v'])
+        self.assertTrue('<a target="_blank" href="http://p/123">'
+                        'pubmed:123</a> sent1' in edata['v'])
+
+
 

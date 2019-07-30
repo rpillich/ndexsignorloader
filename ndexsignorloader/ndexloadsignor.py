@@ -1167,6 +1167,14 @@ class RedundantEdgeCollapser(NetworkUpdator):
         :param e_dict:
         :return:
         """
+        if e_dict['citation'][1] == 'string':
+            if self._pubmedurl is None:
+                return ' '
+            cite_str = e_dict['citation'][0]
+            pubmedid = cite_str[cite_str.index(':') + 1:]
+            return self._get_citation_html_frag(self._pubmedurl,
+                                                pubmedid) + ' '
+
         new_cite = ''
         for cite_str in e_dict['citation'][0]:
             pubmedid = cite_str[cite_str.index(':')+1:]
@@ -1208,11 +1216,23 @@ class RedundantEdgeCollapser(NetworkUpdator):
 
     def _update_edge_with_dict(self, network, collapsed_edge, edge_dict):
         """
+        Replaces attributes on edge specified by edge id in 'collapsed_edge'
+        with values found in 'edge_dict' which is of this structure:
 
-        :param network:
+        {'attributename': (set(value), type)}
+
+        With exception of 'direct' which
+        is stored as 'boolean', attribute items are added to lists
+        and edge attribute type is set to 'list_of_string'
+
+        :param network: Network to update edges on
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
         :param collapsed_edge: id of future collapsed edge
+        :type collapsed_edge: int
         :param edge_dict:
-        :return:
+        :type edge_dict: dict
+        :return: list of strings denoting problems encountered
+        :rtype: list
         """
         issues = []
         for key in edge_dict:
@@ -1321,9 +1341,13 @@ class RedundantEdgeCollapser(NetworkUpdator):
 
     def _set_pubmedurl_from_network(self, network):
         """
+        Gets the http for pubmed citations from the pubmed entry in
+        the @context network attribute setting 'self._pubmedurl' to the
+        value extracted
 
         :param network:
-        :return:
+        :type network: :py:class:`~ndex2.nice_cx_network.NiceCXNetwork`
+        :return: None
         """
         self._pubmedurl = json.loads(network.get_network_attribute('@context')['v'])['pubmed']
 

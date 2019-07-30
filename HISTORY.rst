@@ -2,12 +2,17 @@
 History
 =======
 
-1.0.0 (2019-)
+1.0.0 (2019-07-30)
 -------------------
 
 * **--edgecollapse** flag added which collapses all edges putting all attributes
-  minus **direct** into lists. For **sentence** attribute each entry is in its
-  list is now prepended with href link to citation labeled pubmed:####
+  minus **direct** into lists. For **sentence** attribute each entry the
+  list is now prepended with href link to citation labeled pubmed:#### In addition,
+  if **--edgecollapse** flag is set then a **notes** network attribute is added to
+  let user know.
+
+* **--style** can also accept NDEx UUID for network style. Network needs to be on  same
+  server set in **--profile**
 
 0.3.0 (2019-07-29)
 -------------------

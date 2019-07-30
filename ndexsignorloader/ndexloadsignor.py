@@ -1010,6 +1010,8 @@ class RedundantEdgeCollapser(NetworkUpdator):
     Examines network and collapses edges as
     described in :py:func:`~RedundantEdgeCollapser.update`
     """
+    SENTENCE = 'sentence'
+    CITATION = 'citation'
 
     def __init__(self):
         """
@@ -1113,7 +1115,8 @@ class RedundantEdgeCollapser(NetworkUpdator):
         that are for attributes and creates a dict of
         form:
 
-        ['attributename'] = (value, type)
+        {'attributename': (value, type)}
+
         :param attr_list:
         :return:
         """
@@ -1126,11 +1129,11 @@ class RedundantEdgeCollapser(NetworkUpdator):
         """
         This method takes a dict of format:
 
-        ['attributename'] = (value, type)
+        {'attributename': = (value, type)}
 
         and creates:
 
-        ['attributename'] = (set(value), type)
+        {'attributename': (set(value), type)}
 
         :param attr_list:
         :return:
@@ -1229,6 +1232,35 @@ class RedundantEdgeCollapser(NetworkUpdator):
                                        type='list_of_string')
         return issues
 
+    def _prepend_citation_to_sentences(self, edge_dict):
+        """
+        Given a dict of format:
+
+        {'attributename': (value, type)}
+
+        This method prepends the 'sentence' attribute value
+        with a href link of citation which is derived from
+        'citation' attribute within this dict
+
+        :param edge_dict:
+        :return:
+        """
+        sentence = RedundantEdgeCollapser.SENTENCE
+        if sentence not in edge_dict:
+            return edge_dict
+
+        if RedundantEdgeCollapser.CITATION not in edge_dict:
+            return edge_dict
+
+        cite_str = self._get_citation_from_edge_dict(edge_dict)
+
+        thevalue = edge_dict[sentence][0]
+
+        edge_dict[sentence] = (cite_str + thevalue,
+                               edge_dict[sentence][1])
+
+        return edge_dict
+
     def _collapse_edgeset(self, network, edgeset):
         """
         Given a set of edges collapse these down
@@ -1242,6 +1274,7 @@ class RedundantEdgeCollapser(NetworkUpdator):
         collapsed_edge = edgeset.pop()
         c_eattrib = network.get_edge_attributes(collapsed_edge)
         c_edict = self._convert_attributes_to_dict(c_eattrib)
+        c_edict = self._prepend_citation_to_sentences(c_edict)
         edge_dict = self._convert_attributes_to_dict_with_set(c_edict)
         del c_edict
 

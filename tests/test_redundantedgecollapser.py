@@ -6,7 +6,7 @@
 import os
 import tempfile
 import shutil
-
+import json
 import unittest
 from ndex2.nice_cx_network import NiceCXNetwork
 from ndexsignorloader.ndexloadsignor import RedundantEdgeCollapser
@@ -32,12 +32,6 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
         self.assertEqual('<a target="_blank" href="pubmedurl/pubmedid">'
                          'pubmed:pubmedid</a>',
                          res)
-
-    def test_set_pubmedurl_from_network(self):
-        collapser = RedundantEdgeCollapser()
-        net = NiceCXNetwork()
-        # net.set_network_attribute('@context', values=)
-        pass
 
     def test_remove_edge(self):
         collapser = RedundantEdgeCollapser()
@@ -160,7 +154,56 @@ class TestRedundantEdgeCollapser(unittest.TestCase):
 
     def test_get_citation_from_edge_dict(self):
         collapser = RedundantEdgeCollapser()
-        edge_dict = {'citation': (['123'], 'list_of_string')}
 
-        # collapser._
+        # single citation pubmedurl is None
+        edge_dict = {'citation': (['pubmed:123'], 'list_of_string')}
+        res = collapser._get_citation_from_edge_dict(edge_dict)
+        self.assertEqual(' ', res)
+
+        # multiple citation pubmedurl is None
+        edge_dict = {'citation': (['pubmed:123',
+                                   'pubmed:456'], 'list_of_string')}
+        res = collapser._get_citation_from_edge_dict(edge_dict)
+        self.assertEqual('  ', res)
+
+        # single citation pubmedurl is set
+        net = NiceCXNetwork()
+        ctext = {'pubmed': 'http://p/'}
+        net.set_network_attribute('@context', values=json.dumps(ctext))
+        edge_dict = {'citation': (['pubmed:123'], 'list_of_string')}
+        collapser._set_pubmedurl_from_network(net)
+        res = collapser._get_citation_from_edge_dict(edge_dict)
+        self.assertEqual('<a target="_blank" '
+                         'href="http://p/123">pubmed:123</a> ', res)
+
+        # multiple citation pubmedurl is set
+        edge_dict = {'citation': (['pubmed:123',
+                                   'pubmed:456'], 'list_of_string')}
+        res = collapser._get_citation_from_edge_dict(edge_dict)
+        self.assertEqual('<a target="_blank" '
+                         'href="http://p/123">pubmed:123</a> '
+                         '<a target="_blank" href="http://p/456">pubmed:'
+                         '456</a> ', res)
+
+    def test_prepend_citation_to_sentences(self):
+        collapser = RedundantEdgeCollapser()
+        net = NiceCXNetwork()
+        ctext = {'pubmed': 'http://p/'}
+        net.set_network_attribute('@context', values=json.dumps(ctext))
+        collapser._set_pubmedurl_from_network(net)
+
+        res = collapser._prepend_citation_to_sentences({})
+        self.assertEqual({}, res)
+        res = collapser._prepend_citation_to_sentences({'sentence':
+                                                        ('hi', 'string')})
+        self.assertEqual({'sentence':
+                          ('hi', 'string')}, res)
+        edge_dict = {'citation': (['pubmed:123'], 'list_of_string'),
+                     'sentence': ('sentence2', 'string')}
+        res = collapser._prepend_citation_to_sentences(edge_dict)
+        self.assertEqual('<a target="_blank" href="http://p/123">'
+                         'pubmed:123</a> sentence2',
+                         res['sentence'][0])
+        self.assertEqual('string', res['sentence'][1])
+
 

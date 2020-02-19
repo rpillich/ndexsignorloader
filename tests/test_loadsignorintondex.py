@@ -163,3 +163,31 @@ class TestLoadSignorIntoNDex(unittest.TestCase):
         res = net.get_network_attribute('networkType')
         self.assertEqual(['interactome', 'pathway',
                           'Signalling Pathway'], res['v'])
+
+    def test_add_pathway_info(self):
+        fargs = FakeArgs()
+        fargs.conf = 'hi'
+        fargs.iconurl = 'http://myicon'
+        fargs.edgecollapse = False
+        fargs.profile = 'profile'
+        fargs.datadir = '/foo'
+        fargs.visibility = 'PUBLIC'
+
+        loader = LoadSignorIntoNDEx(fargs, None)
+
+        net = NiceCXNetwork()
+        loader._add_pathway_info(net, 'Human', True, 'mypathway')
+
+        net_attr = net.get_network_attribute('description')
+        self.assertEqual('This network contains all the Human' +
+                         ' interactions currently available ' +
+                         'in SIGNOR', net_attr['v'])
+        net_attr = net.get_network_attribute('organism')
+        self.assertEqual('Homo sapiens (human)', net_attr['v'])
+        net_attr = net.get_network_attribute('rightsHolder')
+        self.assertEqual('Prof. Gianni Cesareni', net_attr['v'])
+        net_attr = net.get_network_attribute('reference')
+        self.assertTrue('<a href="https://doi.org/10.1093/nar/gkv1048" '
+                        'target="_blank">doi: 10.1093'
+                        '/nar/gkv1048</a>' in net_attr['v'])
+

@@ -1618,9 +1618,12 @@ class LoadSignorIntoNDEx(object):
                                                                loadplan)
         report = NetworkIssueReport(pathway_name)
 
-        self._add_pathway_info(network, pathway_id,
-                               is_full_pathway=is_full_pathway,
-                               pathway_name=pathway_name)
+        issues = self._add_pathway_info(network, pathway_id,
+                                        is_full_pathway=is_full_pathway,
+                                        pathway_name=pathway_name)
+        if issues is not None:
+            report.addissues('Adding network attributes', issues)
+            return report
 
         if self._updators is not None:
             for updator in self._updators:
@@ -1757,10 +1760,18 @@ class LoadSignorIntoNDEx(object):
         is_human_fullpathway = False
 
         if is_full_pathway is False:
-            dataframe = self._get_signor_pathway_description_df(pathway_id)
+            try:
+                dataframe = self._get_signor_pathway_description_df(pathway_id)
+            except Exception as e:
+                logger.warning('Skipping ' + pathway_id +
+                               ' due to error parsing for pathway: ' +
+                               pathway_id + ' : ' +
+                               str(e), e)
+                return ['Error parsing description for pathway: ' +
+                        pathway_id + ' : ' + str(e)]
             if dataframe is None:
                 logger.warning('Skipping ' + pathway_id)
-                return
+                return ['No description skipping ' + pathway_id]
             if not pd.isnull(dataframe.iat[0, 1]):
                 network.set_name(dataframe.iat[0, 1])
             if not pd.isnull(dataframe.iat[0, 0]):
@@ -1799,7 +1810,7 @@ class LoadSignorIntoNDEx(object):
                                           ' interactions currently available '
                                           'in SIGNOR')
 
-        network.set_network_attribute('rightsHolder', 'Prof. Gianni Cesareni ')
+        network.set_network_attribute('rightsHolder', 'Prof. Gianni Cesareni')
         network.set_network_attribute('rights',
                                       'Attribution-ShareAlike 4.0 '
                                       'International (CC BY-SA 4.0)')
@@ -1810,9 +1821,9 @@ class LoadSignorIntoNDEx(object):
                                       'relationships between biological '
                                       'entities</b><i>.</i></div><div>Nucleic '
                                       'Acids Res. 2016 Jan 4;44(D1):D548-54'
-                                      '</div><div><span><a href=\"\\&#34;'
+                                      '</div><div><span><a href="'
                                       'https://doi.org/10.1093/nar/gkv1048'
-                                      '\\&#34;\" target=\"\\&#34;\\&#34;\">'
+                                      '" target="_blank">'
                                       'doi: 10.1093/nar/gkv1048</a></span>'
                                       '</div>')
 
@@ -1840,6 +1851,7 @@ class LoadSignorIntoNDEx(object):
         # writes out network attribute describing
         # edge collapse if it was performed
         self._set_edgecollapse_notes(network)
+        return None
 
     def run(self):
         """

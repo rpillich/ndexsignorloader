@@ -2,7 +2,7 @@
 History
 =======
 
-1.0.1 (2020-02-19)
+1.1.0 (2020-02-19)
 -------------------
 
 * Fixed bug where an empty pathway description file would cause loader to fail. Issue #1
@@ -11,6 +11,10 @@ History
   cause they caused problems when displaying the network in Cytoscape
 
 * Fixed bug where URL for DOI in `reference` network attribute was incorrect
+
+* Set minimum version of `ndex2 <https://pypi.org/project/ndex2/>`_ python client to 3.3.1 and maximum to less then 4.0.0
+
+* Set maximum version of `ndexutil <https://pypi.org/project/ndexutil/>`_ to less then 2.0.0
 
 1.0.0 (2019-07-30)
 -------------------

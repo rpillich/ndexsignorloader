@@ -2,6 +2,16 @@
 History
 =======
 
+1.0.1 (2020-02-19)
+-------------------
+
+* Fixed bug where an empty pathway description file would cause loader to fail. Issue #1
+
+* Removed network visual properties: `NETWORK_CENTER_\*, NETWORK_ HEIGHT, NODE_SELECTION, SCALE_FACTOR, SIZE, WIDTH`
+  cause they caused problems when displaying the network in Cytoscape
+
+* Fixed bug where URL for DOI in `reference` network attribute was incorrect
+
 1.0.0 (2019-07-30)
 -------------------
 

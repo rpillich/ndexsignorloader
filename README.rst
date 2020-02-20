@@ -1,3 +1,4 @@
+
 ==========================
 NDEx Signor Content Loader
 ==========================
@@ -32,7 +33,7 @@ This tool downloads data files from Signor_ and performs the following operation
 
 **6\)** Any negative or non-numeric citations are removed from the **citation** edge attribute (There were multiple cases of -1 and **Other**). In addition, a specific PMC:## is updated to its pubmed id.
 
-**7\)** **IF** ``--edgecollapse`` flag is set on commandline, then edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
+**7\)** IF ``--edgecollapse`` flag is set on commandline, then edges between same nodes are collapsed if they have same **interaction** with attributes stored in lists with exception of **direct** which is a bool. The pubmed id is prepended (as html link) to each **sentence** attribute entry.
         In addition, a network attribute named **notes** is added with following text: **Edges have been collapsed with attributes converted to lists with exception of direct attribute**
 
 **8\)** The layout of the network is created using the spring layout, but with additional logic that positions nodes in a vertical based on value of the **location** node attribute. The ordering is as follows:
@@ -48,7 +49,7 @@ This tool downloads data files from Signor_ and performs the following operation
 * **name** is set to data from Signor service **getPathwayData.php?pathway=** (except for the full/complete networks which have a more generic description)
 * **author** is set to data from Signor service **getPathwayData.php?pathway=** (unless its empty in which case its not added to network)
 * **organism** is set to **Human, 9606, Homo sapiens** (except for **Signor Complete - Rat, and Signor Complete - Mouse** networks)
-* **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.0.0)
+* **prov:wasGeneratedBy** is set to ndexsignorloader <VERSION> (example: ndexsignorloader 1.1.0)
 * **prov:wasDerivedFrom** set to URL to download data file (or in case of full networks its set to Signor site)
 * **version** is set to Abbreviated day-month-year (example: 05-Jun-2019)
 * **description** is taken from Signor service **getPathwayData.php?pathway=**
@@ -162,7 +163,7 @@ Via Docker
 
 .. code-block::
 
-   docker run -v `pwd`:`pwd` -w `pwd` coleslawndex/ndexsignorloader:1.0.0 ndexloadsignor.py --conf conf # TODO Add other needed arguments here
+   docker run -v `pwd`:`pwd` -w `pwd` coleslawndex/ndexsignorloader:1.1.0 ndexloadsignor.py --conf conf # TODO Add other needed arguments here
 
 
 Credits
@@ -172,8 +173,7 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-.. _NDEx: http://www.ndexbio.org
+.. _NDEx: https://ndexbio.org
 .. _Signor: https://signor.uniroma2.it/
 .. _loadplan: https://github.com/ndexcontent/ndexsignorloader/blob/master/ndexsignorloader/loadplan.json
 .. _style.cx: https://github.com/ndexcontent/ndexsignorloader/blob/master/ndexsignorloader/style.cx

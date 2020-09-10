@@ -21,12 +21,15 @@
                 },
                {
                     "column_name": "DATABASEA",
-                    "attribute_name": "DATABASE"
+                    "attribute_name": "database"
                 },
                {
                     "column_name": "REGULATOR_LOCATION",
                     "attribute_name": "location"
-
+               },
+               {
+                    "column_name": "TAX_ID",
+                    "attribute_name": "taxon id"
                }
            ]
     },
@@ -42,11 +45,15 @@
                 },
                {
                     "column_name": "DATABASEB",
-                    "attribute_name": "DATABASE"
+                    "attribute_name": "database"
                 },
                {
                     "column_name": "TARGET_LOCATION",
                     "attribute_name": "location"
+               },
+                 {
+                    "column_name": "TAX_ID",
+                    "attribute_name": "taxon id"
                }
            ]
     },
